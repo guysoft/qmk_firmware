@@ -106,7 +106,7 @@ void set_fn1_layer_leds(void) {
     ap2_led_mask_set_key(1, 12, COLOR_PURPLE);  // ] key (END in FN1)
     ap2_led_mask_set_key(2, 10, COLOR_PURPLE);  // ; key (PGUP in FN1)
     ap2_led_mask_set_key(2, 11, COLOR_PURPLE);  // ' key (PGDN in FN1)
-    ap2_led_mask_set_key(3, 9, COLOR_PURPLE);    // . key (INS in FN1)
+    ap2_led_mask_set_key(3, 10, COLOR_PURPLE);    // . key (INS in FN1)
     ap2_led_mask_set_key(3, 11, COLOR_PURPLE);  // / key (DEL in FN1)
     
     // Layer indicators - cyan for active FN1
