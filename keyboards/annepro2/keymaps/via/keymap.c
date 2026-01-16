@@ -171,10 +171,29 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
-// Handle key press feedback (removed - volume keys now use static colors)
+// Handle key press feedback and custom key combinations
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Key press feedback can be added here if needed
-    return true;
+    switch (keycode) {
+        case KC_ESC:
+            if (record->event.pressed) {
+                uint8_t mods = get_mods();
+                if (mods & MOD_MASK_CTRL) {
+                    // Ctrl + Esc = ` (grave)
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code(KC_GRV);
+                    set_mods(mods); // Restore original mods
+                    return false;
+                } else if (mods & MOD_MASK_SHIFT) {
+                    // Shift + Esc = ~ (tilde)
+                    // Shift is already held, grave becomes tilde
+                    tap_code(KC_GRV);
+                    return false;
+                }
+            }
+            return true;
+        default:
+            return true;
+    }
 }
 
 bool led_update_user(led_t leds) {
