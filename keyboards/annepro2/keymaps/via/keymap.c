@@ -67,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
     _______, _______, KC_UP,   _______, _______, _______, _______, _______, _______, _______, KC_PSCR, KC_HOME, KC_END,  _______,
     _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______, _______, _______, _______, _______, KC_PGUP, KC_PGDN, _______,
-    _______,          KC_VOLU, KC_VOLD, KC_MUTE, _______, _______, _______, _______, _______, KC_INS,  KC_DEL,  _______,
+    _______,          KC_VOLU, KC_VOLD, KC_MUTE, _______, KC_MPLY, KC_MPRV, KC_MNXT, _______, KC_INS,  KC_DEL,  _______,
     _______, _______, _______,                            _______,                   _______, _______, MO(FN2), _______
 ),
  [FN2] = LAYOUT_60_ansi( /* FN2 */
@@ -122,6 +122,11 @@ void set_fn1_layer_leds(void) {
     ap2_led_mask_set_key(3, 2, COLOR_YELLOW);  // Volume Up (Z position)
     ap2_led_mask_set_key(3, 3, COLOR_YELLOW);  // Volume Down (X position)
     ap2_led_mask_set_key(3, 4, COLOR_BLUE);    // Mute (C position) - blue to mark as mute
+    
+    // Media controls - green for Play/Pause, orange for Prev/Next
+    ap2_led_mask_set_key(3, 6, COLOR_GREEN);   // Play/Pause (B position)
+    ap2_led_mask_set_key(3, 7, COLOR_ORANGE);  // Previous track (N position)
+    ap2_led_mask_set_key(3, 8, COLOR_ORANGE);  // Next track (M position)
     
     // Navigation/function keys in FN1 - purple
     // p, [, ], ;, ', /, . keys are PSCR, HOME, END, PGUP, PGDN, DEL, INS in FN1
@@ -208,6 +213,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // Key was released, turn off the one-shot layer
             layer_off(FN1);
             osl_fn1_active = false;
+        }
+    }
+    
+    // Force media keys to work when FN1 layer is active
+    // This ensures they work even if VIA or something else tries to override
+    if (layer_state_is(FN1) && record->event.pressed) {
+        switch (keycode) {
+            case KC_B:  // B key on base layer, but should be KC_MPLY on FN1
+                // Check if we're actually on FN1 layer
+                if (get_highest_layer(layer_state) == FN1) {
+                    tap_code(KC_MPLY);
+                    return false;  // Prevent default handling
+                }
+                break;
+            case KC_N:  // N key on base layer, but should be KC_MPRV on FN1
+                if (get_highest_layer(layer_state) == FN1) {
+                    tap_code(KC_MPRV);
+                    return false;
+                }
+                break;
+            case KC_M:  // M key on base layer, but should be KC_MNXT on FN1
+                if (get_highest_layer(layer_state) == FN1) {
+                    tap_code(KC_MNXT);
+                    return false;
+                }
+                break;
         }
     }
     
