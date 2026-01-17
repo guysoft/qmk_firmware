@@ -17,11 +17,32 @@
 #include QMK_KEYBOARD_H
 #include "ap2_led.h"
 
+// Manual one-shot layer tracking (since built-in OSL doesn't work well on AP2)
+static bool osl_fn1_active = false;
+
+// Helper to check if a keycode is a modifier
+static bool is_modifier_keycode(uint16_t keycode) {
+    return (keycode >= KC_LCTL && keycode <= KC_RGUI) ||
+           (keycode & 0xFF00) == QK_MODS ||  // Mod-tap keys when held
+           keycode == KC_LSFT || keycode == KC_RSFT ||
+           keycode == KC_LCTL || keycode == KC_RCTL ||
+           keycode == KC_LALT || keycode == KC_RALT ||
+           keycode == KC_LGUI || keycode == KC_RGUI;
+}
+
 enum anne_pro_layers {
     BASE,
     FN1,
     FN2,
 };
+
+// Custom keycodes
+enum custom_keycodes {
+    OSL_RALT = SAFE_RANGE,  // Right Alt on hold, One-Shot FN1 on tap
+};
+
+// Mod-tap placeholder for OSL_RALT (Alt on hold, custom on tap)
+#define MT_OSL_RALT RALT_T(KC_NO)
 
 // Color definitions
 #define COLOR_RED    ((ap2_led_t){.p.red = 0xff, .p.green = 0x00, .p.blue = 0x00, .p.alpha = 0xff})
@@ -40,7 +61,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,           KC_Q,    KC_W,    KC_E, KC_R, KC_T, KC_Y,   KC_U, KC_I, KC_O,    KC_P,             KC_LBRC,          KC_RBRC,       KC_BSLS,
     LT(FN1, KC_CAPS), KC_A,    KC_S,    KC_D, KC_F, KC_G, KC_H,   KC_J, KC_K, KC_L,    KC_SCLN,          KC_QUOT,          KC_ENT,
     KC_LSFT,                   KC_Z,    KC_X, KC_C, KC_V, KC_B,   KC_N, KC_M, KC_COMM, KC_DOT,           KC_SLSH,          RSFT_T(KC_UP),
-    KC_LCTL,          KC_LGUI, KC_LALT,                   KC_SPC,             KC_RALT, LT(FN1, KC_LEFT), LT(FN2, KC_DOWN), RCTL_T(KC_RGHT)
+    KC_LCTL,          KC_LGUI, KC_LALT,                   KC_SPC,             MT_OSL_RALT, LT(FN1, KC_LEFT), LT(FN2, KC_DOWN), RCTL_T(KC_RGHT)
 ),
  [FN1] = LAYOUT_60_ansi( /* FN1 */
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
@@ -70,6 +91,9 @@ void set_base_layer_leds(void) {
     // Layer indicator keys - red in BASE
     ap2_led_sticky_set_key(2, 0, COLOR_RED);  // Caps Lock
     // FN1 and FN2 already set above as arrow keys
+    
+    // Right Alt (OSL FN1) - orange to indicate one-shot layer capability
+    ap2_led_sticky_set_key(4, 7, COLOR_ORANGE);
     
     // Number row - normal (not lit) in BASE, will light up green when FN1 is pressed
 }
@@ -112,6 +136,7 @@ void set_fn1_layer_leds(void) {
     // Layer indicators - cyan for active FN1
     ap2_led_sticky_set_key(2, 0, COLOR_CYAN);  // Caps Lock
     ap2_led_sticky_set_key(4, 10, COLOR_CYAN); // FN1 key
+    ap2_led_sticky_set_key(4, 7, COLOR_CYAN);  // Right Alt (OSL trigger)
     
     // Space bar - cyan
     ap2_led_mask_set_key(4, 6, COLOR_CYAN);
@@ -143,6 +168,9 @@ void reset_to_base_colors(void) {
     
     // Reset space bar (will use profile color)
     ap2_led_unset_sticky_key(4, 6);
+    
+    // Reset Right Alt to orange (OSL indicator)
+    ap2_led_sticky_set_key(4, 7, COLOR_ORANGE);
 }
 
 void keyboard_post_init_user(void) {
@@ -173,6 +201,16 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 // Handle key press feedback and custom key combinations
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // Manual one-shot layer: turn off FN1 after any non-modifier key is released
+    if (osl_fn1_active && !record->event.pressed && keycode != MT_OSL_RALT) {
+        // Check if it's not a modifier key
+        if (!is_modifier_keycode(keycode)) {
+            // Key was released, turn off the one-shot layer
+            layer_off(FN1);
+            osl_fn1_active = false;
+        }
+    }
+    
     switch (keycode) {
         case KC_ESC:
             if (record->event.pressed) {
@@ -191,9 +229,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return true;
+        
+        case MT_OSL_RALT:
+            // Right Alt on hold, One-Shot FN1 layer on tap
+            if (record->tap.count && record->event.pressed) {
+                if (osl_fn1_active) {
+                    // Already in OSL mode, turn it off
+                    layer_off(FN1);
+                    osl_fn1_active = false;
+                } else {
+                    // Activate manual one-shot FN1 layer
+                    layer_on(FN1);
+                    osl_fn1_active = true;
+                }
+                return false;
+            }
+            // Hold: let it act as normal Right Alt (handled by RALT_T)
+            break;
+        
         default:
             return true;
     }
+    return true;
 }
 
 bool led_update_user(led_t leds) {
