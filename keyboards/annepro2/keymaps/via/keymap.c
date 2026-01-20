@@ -242,6 +242,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     
+    // FN2 + Backspace = Shift+F12
+    if (layer_state_is(FN2) && record->event.pressed && keycode == KC_BSPC) {
+        if (get_highest_layer(layer_state) == FN2) {
+            register_code(KC_LSFT);
+            tap_code(KC_F12);
+            unregister_code(KC_LSFT);
+            return false;  // Prevent default backspace
+        }
+    }
+    
     switch (keycode) {
         case KC_ESC:
             if (record->event.pressed) {
