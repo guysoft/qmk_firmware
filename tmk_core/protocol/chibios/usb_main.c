@@ -27,6 +27,7 @@
 #include "usb_descriptor.h"
 #include "usb_driver.h"
 #include "usb_types.h"
+#include "usb_util.h"
 
 #ifdef RAW_ENABLE
 #    include "raw_hid.h"
@@ -526,7 +527,18 @@ void raw_hid_task(void) {
 #ifdef MIDI_ENABLE
 
 void send_midi_packet(MIDI_EventPacket_t *event) {
-    send_report(USB_ENDPOINT_IN_MIDI, (uint8_t *)event, sizeof(MIDI_EventPacket_t));
+    // Check if USB is connected before attempting to send
+    if (!usb_connected_state()) {
+        return;  // USB not connected, can't send
+    }
+    
+    // Try to send the MIDI packet
+    bool result = send_report(USB_ENDPOINT_IN_MIDI, (uint8_t *)event, sizeof(MIDI_EventPacket_t));
+    
+    // If send failed, the endpoint might not be ready yet
+    // This can happen if the host hasn't claimed the MIDI interface
+    // We silently fail - the endpoint will be ready once the host connects
+    (void)result;  // Suppress unused variable warning
 }
 
 bool recv_midi_packet(MIDI_EventPacket_t *const event) {

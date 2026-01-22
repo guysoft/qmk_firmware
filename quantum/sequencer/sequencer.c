@@ -18,7 +18,7 @@
 #include "debug.h"
 #include "timer.h"
 
-#ifdef MIDI_ENABLE
+#if defined(MIDI_ENABLE) && defined(MIDI_BASIC) && defined(MIDI_ADVANCED)
 #    include "process_midi.h"
 #endif
 
@@ -197,9 +197,13 @@ void sequencer_phase_attack(void) {
         return;
     }
 
-#if defined(MIDI_ENABLE) || defined(MIDI_MOCKED)
-    if (is_sequencer_step_on_for_track(sequencer_internal_state.current_step, sequencer_internal_state.current_track)) {
-        process_midi_basic_noteon(midi_compute_note(sequencer_config.track_notes[sequencer_internal_state.current_track]));
+#if (defined(MIDI_ENABLE) && defined(MIDI_BASIC) && defined(MIDI_ADVANCED)) || defined(MIDI_MOCKED)
+    // Only send MIDI if this track is active AND the step is enabled for this track
+    if (is_sequencer_track_active(sequencer_internal_state.current_track) && 
+        is_sequencer_step_on_for_track(sequencer_internal_state.current_step, sequencer_internal_state.current_track)) {
+        uint8_t note = midi_compute_note(sequencer_config.track_notes[sequencer_internal_state.current_track]);
+        dprintf("sequencer: sending MIDI note %d for track %d step %d\n", note, sequencer_internal_state.current_track, sequencer_internal_state.current_step);
+        process_midi_basic_noteon(note);
     }
 #endif
 
@@ -214,9 +218,12 @@ void sequencer_phase_release(void) {
     if (timer_elapsed(sequencer_internal_state.timer) < SEQUENCER_PHASE_RELEASE_TIMEOUT + sequencer_internal_state.current_track * SEQUENCER_TRACK_THROTTLE) {
         return;
     }
-#if defined(MIDI_ENABLE) || defined(MIDI_MOCKED)
-    if (is_sequencer_step_on_for_track(sequencer_internal_state.current_step, sequencer_internal_state.current_track)) {
-        process_midi_basic_noteoff(midi_compute_note(sequencer_config.track_notes[sequencer_internal_state.current_track]));
+#if (defined(MIDI_ENABLE) && defined(MIDI_BASIC) && defined(MIDI_ADVANCED)) || defined(MIDI_MOCKED)
+    // Only send MIDI note-off if this track is active AND the step was enabled for this track
+    if (is_sequencer_track_active(sequencer_internal_state.current_track) && 
+        is_sequencer_step_on_for_track(sequencer_internal_state.current_step, sequencer_internal_state.current_track)) {
+        uint8_t note = midi_compute_note(sequencer_config.track_notes[sequencer_internal_state.current_track]);
+        process_midi_basic_noteoff(note);
     }
 #endif
     if (sequencer_internal_state.current_track > 0) {
