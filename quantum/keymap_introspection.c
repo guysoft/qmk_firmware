@@ -26,7 +26,7 @@ uint8_t keymap_layer_count_raw(void) {
     return NUM_KEYMAP_LAYERS_RAW;
 }
 
-__attribute__((weak)) uint8_t keymap_layer_count(void) {
+__attribute__((weak)) __attribute__((used)) uint8_t keymap_layer_count(void) {
     return keymap_layer_count_raw();
 }
 
@@ -43,7 +43,7 @@ uint16_t keycode_at_keymap_location_raw(uint8_t layer_num, uint8_t row, uint8_t 
     return KC_TRNS;
 }
 
-__attribute__((weak)) uint16_t keycode_at_keymap_location(uint8_t layer_num, uint8_t row, uint8_t column) {
+__attribute__((weak)) __attribute__((used)) uint16_t keycode_at_keymap_location(uint8_t layer_num, uint8_t row, uint8_t column) {
     return keycode_at_keymap_location_raw(layer_num, row, column);
 }
 
