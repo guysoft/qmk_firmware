@@ -16,9 +16,27 @@
 
 #include QMK_KEYBOARD_H
 #include "ap2_led.h"
+#ifdef SEQUENCER_ENABLE
+#    include "sequencer.h"
+#endif
+#ifdef MIDI_ENABLE
+#    include "qmk_midi.h"
+#endif
 
 // Manual one-shot layer tracking (since built-in OSL doesn't work well on AP2)
 static bool osl_fn1_active = false;
+
+// Sequencer mode state
+#ifdef SEQUENCER_ENABLE
+static bool sequencer_mode_active = false;
+static uint8_t last_sequencer_step = 255;  // Track last step for LED updates
+static bool last_sequencer_state = false;  // Track sequencer on/off state
+#endif
+
+// Piano mode state
+#ifdef MIDI_ENABLE
+static bool piano_mode_active = false;
+#endif
 
 // Helper to check if a keycode is a modifier
 static bool is_modifier_keycode(uint16_t keycode) {
@@ -34,11 +52,14 @@ enum anne_pro_layers {
     BASE,
     FN1,
     FN2,
+    PIANO,
 };
 
 // Custom keycodes
 enum custom_keycodes {
     OSL_RALT = SAFE_RANGE,  // Right Alt on hold, One-Shot FN1 on tap
+    SEQ_ON,                 // Enter sequencer mode
+    SEQ_OFF,                 // Exit sequencer mode
 };
 
 // Mod-tap placeholder for OSL_RALT (Alt on hold, custom on tap)
@@ -53,6 +74,195 @@ enum custom_keycodes {
 #define COLOR_PURPLE ((ap2_led_t){.p.red = 0xff, .p.green = 0x00, .p.blue = 0xff, .p.alpha = 0xff})
 #define COLOR_GREEN  ((ap2_led_t){.p.red = 0x00, .p.green = 0xff, .p.blue = 0x00, .p.alpha = 0xff})
 #define COLOR_LIGHT_BLUE ((ap2_led_t){.p.red = 0x00, .p.green = 0x80, .p.blue = 0xff, .p.alpha = 0xff})
+#define COLOR_WHITE  ((ap2_led_t){.p.red = 0xff, .p.green = 0xff, .p.blue = 0xff, .p.alpha = 0xff})
+#define COLOR_DIM_RED ((ap2_led_t){.p.red = 0x40, .p.green = 0x00, .p.blue = 0x00, .p.alpha = 0xff})
+#define COLOR_PINK ((ap2_led_t){.p.red = 0xff, .p.green = 0x69, .p.blue = 0xb4, .p.alpha = 0xff})
+
+#ifdef SEQUENCER_ENABLE
+// Step-to-key mapping: 16 steps mapped to physical keys
+// More even layout: 8 steps per row
+// Steps 0-7: Top row letters (Q-P keys) - row 1, columns 1-8
+// Steps 8-15: Second row letters (A-L keys) - row 2, columns 1-8
+typedef struct {
+    uint8_t row;
+    uint8_t col;
+} step_key_map_t;
+
+static const step_key_map_t step_key_map[16] = {
+    {1, 1},  // Step 0 -> Q key
+    {1, 2},  // Step 1 -> W key
+    {1, 3},  // Step 2 -> E key
+    {1, 4},  // Step 3 -> R key
+    {1, 5},  // Step 4 -> T key
+    {1, 6},  // Step 5 -> Y key
+    {1, 7},  // Step 6 -> U key
+    {1, 8},  // Step 7 -> I key
+    {2, 1},  // Step 8 -> A key
+    {2, 2},  // Step 9 -> S key
+    {2, 3},  // Step 10 -> D key
+    {2, 4},  // Step 11 -> F key
+    {2, 5},  // Step 12 -> G key
+    {2, 6},  // Step 13 -> H key
+    {2, 7},  // Step 14 -> J key
+    {2, 8},  // Step 15 -> K key
+};
+#endif
+
+// Piano mode functions
+#ifdef MIDI_ENABLE
+// Forward declarations for piano functions
+void piano_mode_on(void);
+void piano_mode_off(void);
+void set_piano_layer_leds(void);
+void reset_to_base_colors(void);  // Forward declare
+void clear_all_sticky_keys(void);  // Forward declare
+
+// Enter piano mode
+void piano_mode_on(void) {
+    piano_mode_active = true;
+    layer_on(PIANO);
+    // Clear all previous LED states (including sticky) to avoid leftover colors
+    clear_all_sticky_keys();
+    ap2_led_reset_foreground_color();
+    set_piano_layer_leds();
+}
+
+// Exit piano mode
+void piano_mode_off(void) {
+    piano_mode_active = false;
+    layer_off(PIANO);
+    reset_to_base_colors();
+}
+
+// Set LED colors for piano layer
+void set_piano_layer_leds(void) {
+    // White keys (C, D, E, F, G, A, B) - White LED
+    ap2_led_mask_set_key(2, 1, COLOR_WHITE);  // A - C4
+    ap2_led_mask_set_key(2, 2, COLOR_WHITE);  // S - D4
+    ap2_led_mask_set_key(2, 3, COLOR_WHITE);  // D - E4
+    ap2_led_mask_set_key(2, 4, COLOR_WHITE);  // F - F4
+    ap2_led_mask_set_key(2, 5, COLOR_WHITE);  // G - G4
+    ap2_led_mask_set_key(2, 6, COLOR_WHITE);  // H - A4
+    ap2_led_mask_set_key(2, 7, COLOR_WHITE);  // J - B4
+    ap2_led_mask_set_key(2, 8, COLOR_WHITE);  // K - C5
+    ap2_led_mask_set_key(2, 9, COLOR_WHITE);  // L - D5
+    ap2_led_mask_set_key(2, 10, COLOR_WHITE); // ; - E5
+    ap2_led_mask_set_key(2, 11, COLOR_WHITE); // ' - F5
+    
+    // Sharp keys (C#, D#, F#, G#, A#) - Yellow LED
+    ap2_led_mask_set_key(1, 2, COLOR_YELLOW);  // W - C#4
+    ap2_led_mask_set_key(1, 3, COLOR_YELLOW);  // E - D#4
+    ap2_led_mask_set_key(1, 5, COLOR_YELLOW);  // T - F#4 (mapped to T key before G)
+    ap2_led_mask_set_key(1, 6, COLOR_YELLOW);  // Y - G#4
+    ap2_led_mask_set_key(1, 7, COLOR_YELLOW);  // U - A#4
+    ap2_led_mask_set_key(1, 9, COLOR_YELLOW);  // O - C#5
+    ap2_led_mask_set_key(1, 10, COLOR_YELLOW); // P - D#5
+    ap2_led_mask_set_key(1, 12, COLOR_YELLOW); // ] - F#5
+    
+    // Control keys - Cyan
+    ap2_led_mask_set_key(3, 1, COLOR_CYAN);  // Z - Octave down
+    ap2_led_mask_set_key(3, 2, COLOR_CYAN);  // X - Octave up
+    ap2_led_mask_set_key(3, 7, COLOR_CYAN);  // M - Exit (with FN2)
+    
+    // Explicitly clear N key (column 6) to prevent FN1 layer LED from showing
+    ap2_led_unset_sticky_key(3, 6);  // N key - clear any sticky LED from other layers
+}
+#endif
+
+#ifdef SEQUENCER_ENABLE
+// Forward declarations (needed because functions call each other)
+void update_sequencer_leds(void);
+void sequencer_mode_on(void);
+void sequencer_mode_off(void);
+void reset_to_base_colors(void);  // Declared later, forward declare here
+
+// Enter sequencer mode
+void sequencer_mode_on(void) {
+    sequencer_mode_active = true;
+    // Activate track 0 by default for programming
+    sequencer_activate_track(0);
+    // Clear previous LED state and show sequencer visualization
+    ap2_led_reset_foreground_color();
+    // Set a simple indicator: make all step keys dim red initially
+    for (uint8_t step = 0; step < 16; step++) {
+        step_key_map_t key_pos = step_key_map[step];
+        ap2_led_mask_set_key(key_pos.row, key_pos.col, COLOR_DIM_RED);
+    }
+    // Don't start the sequencer automatically - let user press space to start
+    // sequencer_on();  // Commented out - user starts with space bar
+    // Update LEDs to show current state
+    update_sequencer_leds();
+}
+
+// Exit sequencer mode
+void sequencer_mode_off(void) {
+    sequencer_mode_active = false;
+    sequencer_off();  // Stop the sequencer
+    // Restore normal LED state
+    reset_to_base_colors();
+}
+
+// Update LEDs to show sequencer state
+void update_sequencer_leds(void) {
+    if (!sequencer_mode_active) {
+        return;
+    }
+    
+    bool sequencer_running = is_sequencer_on();
+    uint8_t current_step = sequencer_get_current_step();
+    
+    // Always update LEDs for smooth visualization (matrix_scan_user is called frequently)
+    // Update all step LEDs
+    for (uint8_t step = 0; step < 16; step++) {
+        step_key_map_t key_pos = step_key_map[step];
+        ap2_led_t step_color;
+        
+        // Check if step is enabled for any active track
+        bool step_enabled = false;
+        for (uint8_t track = 0; track < 8; track++) {
+            if (is_sequencer_track_active(track) && is_sequencer_step_on_for_track(step, track)) {
+                step_enabled = true;
+                break;
+            }
+        }
+        
+        // Determine color based on state
+        if (step == current_step && sequencer_running) {
+            // Current playing step: bright white/cyan for visibility
+            step_color = COLOR_WHITE;
+        } else if (step_enabled) {
+            // Enabled step: green
+            step_color = COLOR_GREEN;
+        } else {
+            // Disabled step: dim red
+            step_color = COLOR_DIM_RED;
+        }
+        
+        ap2_led_mask_set_key(key_pos.row, key_pos.col, step_color);
+    }
+    
+    // Update sequencer status indicator on space bar - use sticky for visibility
+    if (sequencer_running) {
+        ap2_led_sticky_set_key(4, 6, COLOR_CYAN);  // Cyan = sequencer running
+    } else {
+        ap2_led_sticky_set_key(4, 6, COLOR_PURPLE);  // Purple = sequencer stopped
+    }
+    
+    // Show active track(s) on number row (keys 1-8) - use sticky to ensure visibility
+    for (uint8_t track = 0; track < 8; track++) {
+        if (is_sequencer_track_active(track)) {
+            // Track 0-7 map to keys 1-8 (columns 1-8)
+            ap2_led_sticky_set_key(0, track + 1, COLOR_YELLOW);  // Yellow = active track
+        } else {
+            // Don't set inactive tracks - let them be dim or default
+            ap2_led_unset_sticky_key(0, track + 1);
+        }
+    }
+    
+    last_sequencer_state = sequencer_running;
+    last_sequencer_step = current_step;
+}
+#endif
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -72,13 +282,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
  [FN2] = LAYOUT_60_ansi( /* FN2 */
     _______, KC_AP2_BT1, KC_AP2_BT2, KC_AP2_BT3, KC_AP2_BT4, _______, _______, _______, _______, KC_AP_RGB_MOD, KC_AP_RGB_TOG, KC_AP_RGB_VAD, KC_AP_RGB_VAI, _______,
-    _______, _______,    KC_UP,      _______,    _______,    _______, _______, _______, _______, _______,       KC_PSCR,       KC_HOME,       KC_END,        _______,
-    _______, KC_LEFT,    KC_DOWN,    KC_RGHT,    _______,    _______, _______, _______, _______, _______,       KC_PGUP,       KC_PGDN,       _______,
+    _______, _______,    KC_UP,      KC_E,       _______,    _______, _______, _______, _______, _______,       KC_PSCR,       KC_HOME,       KC_END,        _______,
+    _______, KC_LEFT,    KC_DOWN,    KC_RGHT,    _______,    _______, _______, _______, _______, KC_K,          KC_PGUP,       KC_PGDN,       _______,
     _______,             _______,    _______,    _______,    _______, _______, _______, _______, _______,       KC_INS,        KC_DEL,        _______,
     _______, _______,    _______,                                     _______,                   _______,       _______,       _______,       _______
  ),
+ [PIANO] = LAYOUT_60_ansi( /* PIANO - MIDI Piano Keyboard */
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, QK_MIDI_NOTE_C_SHARP_4, QK_MIDI_NOTE_D_SHARP_4, _______, QK_MIDI_NOTE_F_SHARP_4, QK_MIDI_NOTE_G_SHARP_4, QK_MIDI_NOTE_A_SHARP_4, _______, QK_MIDI_NOTE_C_SHARP_5, QK_MIDI_NOTE_D_SHARP_5, _______, QK_MIDI_NOTE_F_SHARP_5, _______,
+    _______, QK_MIDI_NOTE_C_4, QK_MIDI_NOTE_D_4, QK_MIDI_NOTE_E_4, QK_MIDI_NOTE_F_4, QK_MIDI_NOTE_G_4, QK_MIDI_NOTE_A_4, QK_MIDI_NOTE_B_4, QK_MIDI_NOTE_C_5, QK_MIDI_NOTE_D_5, QK_MIDI_NOTE_E_5, QK_MIDI_NOTE_F_5, _______,
+    _______, QK_MIDI_OCTAVE_DOWN, QK_MIDI_OCTAVE_UP, _______, _______, _______, _______, KC_M, _______, _______, _______, _______,
+    _______, _______, _______,                                     _______,                   _______,       _______,       _______,       _______
+ ),
 };
 // clang-format on
+
+// Forward declarations for LED functions
+void set_base_layer_leds(void);
+void set_fn1_layer_leds(void);
+void set_fn2_layer_leds(void);
 
 // Helper function to set BASE layer constants (arrow keys, layer indicators)
 void set_base_layer_leds(void) {
@@ -159,6 +381,11 @@ void set_fn2_layer_leds(void) {
     // Layer indicator - purple for active FN2
     ap2_led_sticky_set_key(4, 11, COLOR_PURPLE); // FN2 key
     
+#ifdef MIDI_ENABLE
+    // Mark piano mode key with pink so it's visible
+    ap2_led_mask_set_key(1, 8, COLOR_PINK);  // I key (row 1, col 8) - Piano mode
+#endif
+    
     // Space bar - purple
     ap2_led_mask_set_key(4, 6, COLOR_PURPLE);
 }
@@ -184,9 +411,28 @@ void keyboard_post_init_user(void) {
     
     // Set BASE layer constant LEDs
     set_base_layer_leds();
+    
+#ifdef MIDI_ENABLE
+    // Initialize MIDI device (required for MIDI output)
+    setup_midi();
+#endif
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
+#ifdef SEQUENCER_ENABLE
+    // Don't override LEDs if sequencer mode is active
+    if (sequencer_mode_active) {
+        return state;
+    }
+#endif
+
+#ifdef MIDI_ENABLE
+    // Don't override LEDs if piano mode is active
+    if (piano_mode_active) {
+        return state;
+    }
+#endif
+    
     // Clear previous layer colors
     ap2_led_reset_foreground_color();
     
@@ -197,6 +443,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         case FN2:
             set_fn2_layer_leds();
             break;
+#ifdef MIDI_ENABLE
+        case PIANO:
+            set_piano_layer_leds();
+            break;
+#endif
         default:
             reset_to_base_colors();
             break;
@@ -252,6 +503,113 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     
+#ifdef MIDI_ENABLE
+    // FN2 + I = Enter piano mode
+    if (layer_state_is(FN2) && record->event.pressed && keycode == KC_I) {
+        // Double-check layer state
+        if (get_highest_layer(layer_state) == FN2) {
+            // Activate piano mode
+            if (!piano_mode_active) {
+                piano_mode_on();
+            }
+            return false;  // Prevent default I key
+        }
+    }
+    
+    // FN2 + M = Exit piano mode (NOTE: Currently not working reliably)
+    // Check if FN2 is held (not necessarily highest layer, since PIANO might be active)
+    if (piano_mode_active && layer_state_is(FN2) && record->event.pressed && keycode == KC_M) {
+        piano_mode_off();
+        return false;  // Prevent default M key
+    }
+    
+    // ESC = Exit piano mode (alternative exit method)
+    if (piano_mode_active && record->event.pressed && keycode == KC_ESC) {
+        piano_mode_off();
+        return false;  // Prevent default ESC key
+    }
+#endif
+    
+#ifdef SEQUENCER_ENABLE
+    // FN2 + E = Enter sequencer mode (intercept E key when FN2 is active)
+    if (record->event.pressed && keycode == KC_E) {
+        if (get_highest_layer(layer_state) == FN2) {
+            // Simple test: turn all LEDs purple to confirm detection
+            ap2_led_reset_foreground_color();
+            for (uint8_t row = 0; row < 5; row++) {
+                for (uint8_t col = 0; col < 14; col++) {
+                    ap2_led_mask_set_key(row, col, COLOR_PURPLE);
+                }
+            }
+            if (!sequencer_mode_active) {
+                sequencer_mode_on();
+            }
+            return false;  // Prevent default E key
+        }
+    }
+    
+    // FN2 + K = Exit sequencer mode (intercept K key when FN2 is active)
+    if (record->event.pressed && keycode == KC_K) {
+        if (get_highest_layer(layer_state) == FN2) {
+            if (sequencer_mode_active) {
+                sequencer_mode_off();
+            } else {
+                // Test: restore base colors
+                reset_to_base_colors();
+            }
+            return false;  // Prevent default K key
+        }
+    }
+    
+    
+    // In sequencer mode, handle controls and step programming
+    if (sequencer_mode_active && record->event.pressed) {
+        // Track selection: Number row 1-8 selects tracks 0-7
+        switch (keycode) {
+            case KC_1: sequencer_toggle_single_active_track(0); return false;
+            case KC_2: sequencer_toggle_single_active_track(1); return false;
+            case KC_3: sequencer_toggle_single_active_track(2); return false;
+            case KC_4: sequencer_toggle_single_active_track(3); return false;
+            case KC_5: sequencer_toggle_single_active_track(4); return false;
+            case KC_6: sequencer_toggle_single_active_track(5); return false;
+            case KC_7: sequencer_toggle_single_active_track(6); return false;
+            case KC_8: sequencer_toggle_single_active_track(7); return false;
+            
+            // Controls
+            case KC_SPC: sequencer_toggle(); return false;  // Space = Play/Pause
+            case KC_0: sequencer_set_all_steps_off(); return false;  // 0 = Clear all steps
+            case KC_9: sequencer_set_all_steps_on(); return false;  // 9 = Enable all steps
+            case KC_MINS: sequencer_decrease_tempo(); return false;  // - = Slower tempo
+            case KC_EQL: sequencer_increase_tempo(); return false;   // = = Faster tempo
+            // Test MIDI: L key sends a test C4 note (for debugging)
+            case KC_L: 
+                #if defined(MIDI_ENABLE) && defined(MIDI_BASIC)
+                process_midi_basic_noteon(60);  // C4 = MIDI note 60
+                midi_device_process(&midi_device);  // Force immediate processing
+                #endif
+                return false;
+            
+            // Step programming: Q-I and A-K toggle steps
+            case KC_Q: sequencer_toggle_step(0); return false;
+            case KC_W: sequencer_toggle_step(1); return false;
+            case KC_E: sequencer_toggle_step(2); return false;
+            case KC_R: sequencer_toggle_step(3); return false;
+            case KC_T: sequencer_toggle_step(4); return false;
+            case KC_Y: sequencer_toggle_step(5); return false;
+            case KC_U: sequencer_toggle_step(6); return false;
+            case KC_I: sequencer_toggle_step(7); return false;
+            case KC_A: sequencer_toggle_step(8); return false;
+            case KC_S: sequencer_toggle_step(9); return false;
+            case KC_D: sequencer_toggle_step(10); return false;
+            case KC_F: sequencer_toggle_step(11); return false;
+            case KC_G: sequencer_toggle_step(12); return false;
+            case KC_H: sequencer_toggle_step(13); return false;
+            case KC_J: sequencer_toggle_step(14); return false;
+            case KC_K: sequencer_toggle_step(15); return false;
+        }
+    }
+#endif
+    
     switch (keycode) {
         case KC_ESC:
             if (record->event.pressed) {
@@ -294,9 +652,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-bool led_update_user(led_t leds) {
-    // Handle caps lock LED if needed
-    // The layer state handler will manage layer indicator colors
-    return true;
+#ifdef SEQUENCER_ENABLE
+// Real-time LED updates for sequencer visualization
+void matrix_scan_user(void) {
+    if (sequencer_mode_active) {
+        update_sequencer_leds();
+    }
 }
+#endif
 
