@@ -22,6 +22,9 @@
 #ifdef MIDI_ENABLE
 #    include "qmk_midi.h"
 #endif
+#ifdef COMBO_ENABLE
+#    include "process_combo.h"
+#endif
 
 // Manual one-shot layer tracking (since built-in OSL doesn't work well on AP2)
 static bool osl_fn1_active = false;
@@ -38,6 +41,9 @@ static bool last_sequencer_state = false;  // Track sequencer on/off state
 static bool piano_mode_active = false;
 #endif
 
+// Artsey mode state
+static bool artsey_mode_active = false;
+
 // Helper to check if a keycode is a modifier
 static bool is_modifier_keycode(uint16_t keycode) {
     return (keycode >= KC_LCTL && keycode <= KC_RGUI) ||
@@ -53,6 +59,7 @@ enum anne_pro_layers {
     FN1,
     FN2,
     PIANO,
+    // ARTSEY layer removed - we handle Artsey mode on BASE layer instead
 };
 
 // Custom keycodes
@@ -77,6 +84,18 @@ enum custom_keycodes {
 #define COLOR_WHITE  ((ap2_led_t){.p.red = 0xff, .p.green = 0xff, .p.blue = 0xff, .p.alpha = 0xff})
 #define COLOR_DIM_RED ((ap2_led_t){.p.red = 0x40, .p.green = 0x00, .p.blue = 0x00, .p.alpha = 0xff})
 #define COLOR_PINK ((ap2_led_t){.p.red = 0xff, .p.green = 0x69, .p.blue = 0xb4, .p.alpha = 0xff})
+
+// Artsey key aliases - map physical keys to Artsey positions
+// Top row: Q W E R -> BASE_1_1 BASE_1_2 BASE_1_3 BASE_1_4
+// Bottom row: A S D F -> BASE_2_1 BASE_2_2 BASE_2_3 BASE_2_4
+#define BASE_1_1 KC_Q  // Q key -> Artsey S
+#define BASE_1_2 KC_W  // W key -> Artsey T
+#define BASE_1_3 KC_E  // E key -> Artsey R
+#define BASE_1_4 KC_R  // R key -> Artsey A
+#define BASE_2_1 KC_A  // A key -> Artsey O
+#define BASE_2_2 KC_S  // S key -> Artsey I
+#define BASE_2_3 KC_D  // D key -> Artsey Y
+#define BASE_2_4 KC_F  // F key -> Artsey E
 
 #ifdef SEQUENCER_ENABLE
 // Step-to-key mapping: 16 steps mapped to physical keys
@@ -166,6 +185,382 @@ void set_piano_layer_leds(void) {
     
     // Explicitly clear N key (column 6) to prevent FN1 layer LED from showing
     ap2_led_unset_sticky_key(3, 6);  // N key - clear any sticky LED from other layers
+}
+#endif
+
+// Artsey mode functions
+// Forward declarations
+void artsey_mode_on(void);
+void artsey_mode_off(void);
+void set_artsey_layer_leds(void);
+void reset_to_base_colors(void);  // Forward declare
+
+// Enter Artsey mode
+void artsey_mode_on(void) {
+    artsey_mode_active = true;
+    // Don't activate a layer - we handle Artsey on BASE layer
+    clear_all_sticky_keys();
+    ap2_led_reset_foreground_color();
+    set_artsey_layer_leds();
+}
+
+// Exit Artsey mode
+void artsey_mode_off(void) {
+    artsey_mode_active = false;
+    // No layer to deactivate
+    reset_to_base_colors();
+}
+
+// Set LED colors for Artsey layer
+void set_artsey_layer_leds(void) {
+    // QWER/ASDF keys - Orange LED (matching FN1 style)
+    ap2_led_mask_set_key(1, 1, COLOR_ORANGE);  // Q - Artsey S
+    ap2_led_mask_set_key(1, 2, COLOR_ORANGE);  // W - Artsey T
+    ap2_led_mask_set_key(1, 3, COLOR_ORANGE);  // E - Artsey R
+    ap2_led_mask_set_key(1, 4, COLOR_ORANGE);  // R - Artsey A
+    ap2_led_mask_set_key(2, 1, COLOR_ORANGE);  // A - Artsey O
+    ap2_led_mask_set_key(2, 2, COLOR_ORANGE);  // S - Artsey I
+    ap2_led_mask_set_key(2, 3, COLOR_ORANGE);  // D - Artsey Y
+    ap2_led_mask_set_key(2, 4, COLOR_ORANGE);  // F - Artsey E
+}
+
+#ifdef COMBO_ENABLE
+// Artsey combo system
+enum combo_events {
+    ARTSEY_H,
+    ARTSEY_Q,
+    ARTSEY_U,
+    ARTSEY_C,
+    ARTSEY_K,  // K = D+A (O+Y in Artsey)
+    ARTSEY_B,
+    ARTSEY_W,
+    ARTSEY_N,
+    ARTSEY_F,
+    ARTSEY_X,  // X = Q+W+E (S+T+R in Artsey)
+    ARTSEY_J,
+    ARTSEY_M,  // M = A+S+D (O+I+Y in Artsey)
+    ARTSEY_P,  // P = A+S+F (O+I+E in Artsey)
+    ARTSEY_V,  // V = Q+E (S+R in Artsey)
+    ARTSEY_L,  // L = F+D+S (E+Y+I in Artsey)
+    ARTSEY_Z,  // Z = Q+W+E+R (S+T+R+A in Artsey)
+    ARTSEY_D,  // D = R+E+W (A+R+T in Artsey)
+    ARTSEY_G,
+    ARTSEY_SPACE,
+    ARTSEY_BACKSPACE,
+    ARTSEY_ENTER,
+    // Punctuation
+    ARTSEY_QUOTE,   // ' - E+D (Y+R)
+    ARTSEY_BANG,    // ! - W+S (I+T)
+    ARTSEY_QUEST,   // ? - Q+A (O+S)
+    ARTSEY_PERIOD,  // . - R+S (I+A)
+    ARTSEY_COMMA,   // , - R+D (Y+A)
+    ARTSEY_SLASH,   // / - R+A (O+A)
+    // Control keys
+    ARTSEY_TAB,     // Tab - R+E+W+A
+    ARTSEY_ESCAPE,  // Escape - R+E+A
+    ARTSEY_DEL,     // Delete - E+F
+    // Modifiers
+    ARTSEY_OS_SHIFT, // One-shot shift - F+E+W+Q
+    ARTSEY_CTRL,     // Ctrl toggle - Q+F
+    ARTSEY_GUI,      // GUI/Win toggle - Q+D
+    ARTSEY_ALT,      // Alt toggle - Q+S
+    ARTSEY_SHIFT,    // Shift toggle - R+D+S+A
+    ARTSEY_PANIC,    // Clear all modifiers - All 8 keys
+    COMBO_LENGTH
+};
+uint16_t COMBO_LEN = COMBO_LENGTH;
+
+// Combo definitions - using BASE_X_Y aliases
+const uint16_t PROGMEM artsey_h[] = {BASE_2_4, BASE_2_2, COMBO_END};
+const uint16_t PROGMEM artsey_q[] = {BASE_1_4, BASE_1_2, BASE_1_1, COMBO_END};
+const uint16_t PROGMEM artsey_u[] = {BASE_2_3, BASE_2_2, COMBO_END};
+const uint16_t PROGMEM artsey_c[] = {BASE_2_4, BASE_2_3, COMBO_END};
+const uint16_t PROGMEM artsey_k[] = {BASE_2_3, BASE_2_1, COMBO_END};  // K = D+A (O+Y in Artsey)
+const uint16_t PROGMEM artsey_b[] = {BASE_2_4, BASE_2_1, COMBO_END};
+const uint16_t PROGMEM artsey_w[] = {BASE_1_4, BASE_1_1, COMBO_END};
+const uint16_t PROGMEM artsey_n[] = {BASE_2_2, BASE_2_1, COMBO_END};
+const uint16_t PROGMEM artsey_f[] = {BASE_1_4, BASE_1_3, COMBO_END};
+const uint16_t PROGMEM artsey_x[] = {BASE_1_3, BASE_1_2, BASE_1_1, COMBO_END};  // X = Q+W+E (S+T+R in Artsey)
+const uint16_t PROGMEM artsey_j[] = {BASE_1_2, BASE_1_1, COMBO_END};
+const uint16_t PROGMEM artsey_m[] = {BASE_2_3, BASE_2_2, BASE_2_1, COMBO_END};  // M = A+S+D (O+I+Y in Artsey)
+const uint16_t PROGMEM artsey_p[] = {BASE_2_4, BASE_2_2, BASE_2_1, COMBO_END};  // P = A+S+F (O+I+E in Artsey)
+const uint16_t PROGMEM artsey_v[] = {BASE_1_3, BASE_1_1, COMBO_END};  // V = Q+E (S+R in Artsey)
+const uint16_t PROGMEM artsey_l[] = {BASE_2_4, BASE_2_3, BASE_2_2, COMBO_END};  // L = F+D+S (E+Y+I in Artsey)
+const uint16_t PROGMEM artsey_z[] = {BASE_1_4, BASE_1_3, BASE_1_2, BASE_1_1, COMBO_END};  // Z = Q+W+E+R (S+T+R+A in Artsey)
+const uint16_t PROGMEM artsey_d[] = {BASE_1_4, BASE_1_3, BASE_1_2, COMBO_END};  // D = R+E+W (A+R+T in Artsey)
+const uint16_t PROGMEM artsey_g[] = {BASE_1_3, BASE_1_2, COMBO_END};
+const uint16_t PROGMEM artsey_space[] = {BASE_2_4, BASE_2_3, BASE_2_2, BASE_2_1, COMBO_END};
+const uint16_t PROGMEM artsey_backspace[] = {BASE_2_4, BASE_1_3, COMBO_END};  // Fixed: F+E (E+R in Artsey)
+const uint16_t PROGMEM artsey_enter[] = {BASE_1_4, BASE_2_4, COMBO_END};
+// Punctuation
+const uint16_t PROGMEM artsey_quote[] = {BASE_1_3, BASE_2_3, COMBO_END};   // E+D (Y+R in Artsey)
+const uint16_t PROGMEM artsey_bang[] = {BASE_1_2, BASE_2_2, COMBO_END};     // W+S (I+T in Artsey)
+const uint16_t PROGMEM artsey_quest[] = {BASE_1_1, BASE_2_1, COMBO_END};   // Q+A (O+S in Artsey)
+const uint16_t PROGMEM artsey_period[] = {BASE_1_4, BASE_2_2, COMBO_END};   // R+S (I+A in Artsey)
+const uint16_t PROGMEM artsey_comma[] = {BASE_1_4, BASE_2_3, COMBO_END};   // R+D (Y+A in Artsey)
+const uint16_t PROGMEM artsey_slash[] = {BASE_1_4, BASE_2_1, COMBO_END};   // R+A (O+A in Artsey)
+// Control keys
+const uint16_t PROGMEM artsey_tab[] = {BASE_1_4, BASE_1_3, BASE_1_2, BASE_2_1, COMBO_END};  // R+E+W+A
+const uint16_t PROGMEM artsey_escape[] = {BASE_1_4, BASE_1_3, BASE_2_1, COMBO_END};         // R+E+A
+const uint16_t PROGMEM artsey_del[] = {BASE_2_2, BASE_1_3, COMBO_END};                    // S+E (I+R in Artsey)
+// Modifiers
+const uint16_t PROGMEM artsey_os_shift[] = {BASE_2_4, BASE_1_3, BASE_1_2, BASE_1_1, COMBO_END}; // F+E+W+Q
+const uint16_t PROGMEM artsey_ctrl[] = {BASE_1_1, BASE_2_4, COMBO_END};                         // Q+F
+const uint16_t PROGMEM artsey_gui[] = {BASE_1_1, BASE_2_3, COMBO_END};                          // Q+D
+const uint16_t PROGMEM artsey_alt[] = {BASE_1_1, BASE_2_2, COMBO_END};                          // Q+S
+const uint16_t PROGMEM artsey_shift[] = {BASE_1_4, BASE_2_3, BASE_2_2, BASE_2_1, COMBO_END};    // R+D+S+A
+const uint16_t PROGMEM artsey_panic[] = {BASE_1_4, BASE_1_3, BASE_1_2, BASE_1_1, BASE_2_4, BASE_2_3, BASE_2_2, BASE_2_1, COMBO_END}; // All 8 keys
+
+combo_t key_combos[] = {
+    [ARTSEY_H] = COMBO_ACTION(artsey_h),
+    [ARTSEY_Q] = COMBO_ACTION(artsey_q),
+    [ARTSEY_U] = COMBO_ACTION(artsey_u),
+    [ARTSEY_C] = COMBO_ACTION(artsey_c),
+    [ARTSEY_K] = COMBO_ACTION(artsey_k),
+    [ARTSEY_B] = COMBO_ACTION(artsey_b),
+    [ARTSEY_W] = COMBO_ACTION(artsey_w),
+    [ARTSEY_N] = COMBO_ACTION(artsey_n),
+    [ARTSEY_F] = COMBO_ACTION(artsey_f),
+    [ARTSEY_X] = COMBO_ACTION(artsey_x),
+    [ARTSEY_J] = COMBO_ACTION(artsey_j),
+    [ARTSEY_M] = COMBO_ACTION(artsey_m),
+    [ARTSEY_P] = COMBO_ACTION(artsey_p),
+    [ARTSEY_V] = COMBO_ACTION(artsey_v),
+    [ARTSEY_L] = COMBO_ACTION(artsey_l),
+    [ARTSEY_Z] = COMBO_ACTION(artsey_z),
+    [ARTSEY_D] = COMBO_ACTION(artsey_d),
+    [ARTSEY_G] = COMBO_ACTION(artsey_g),
+    [ARTSEY_SPACE] = COMBO_ACTION(artsey_space),
+    [ARTSEY_BACKSPACE] = COMBO_ACTION(artsey_backspace),
+    [ARTSEY_ENTER] = COMBO_ACTION(artsey_enter),
+    // Punctuation
+    [ARTSEY_QUOTE] = COMBO_ACTION(artsey_quote),
+    [ARTSEY_BANG] = COMBO_ACTION(artsey_bang),
+    [ARTSEY_QUEST] = COMBO_ACTION(artsey_quest),
+    [ARTSEY_PERIOD] = COMBO_ACTION(artsey_period),
+    [ARTSEY_COMMA] = COMBO_ACTION(artsey_comma),
+    [ARTSEY_SLASH] = COMBO_ACTION(artsey_slash),
+    // Control keys
+    [ARTSEY_TAB] = COMBO_ACTION(artsey_tab),
+    [ARTSEY_ESCAPE] = COMBO_ACTION(artsey_escape),
+    [ARTSEY_DEL] = COMBO_ACTION(artsey_del),
+    // Modifiers
+    [ARTSEY_OS_SHIFT] = COMBO_ACTION(artsey_os_shift),
+    [ARTSEY_CTRL] = COMBO_ACTION(artsey_ctrl),
+    [ARTSEY_GUI] = COMBO_ACTION(artsey_gui),
+    [ARTSEY_ALT] = COMBO_ACTION(artsey_alt),
+    [ARTSEY_SHIFT] = COMBO_ACTION(artsey_shift),
+    [ARTSEY_PANIC] = COMBO_ACTION(artsey_panic),
+};
+
+void process_combo_event(uint16_t combo_index, bool pressed) {
+    // Only process Artsey combos when Artsey mode is active
+    // But first check if combos are being detected at all
+    if (!artsey_mode_active) {
+        return;
+    }
+    
+    switch(combo_index) {
+        case ARTSEY_H:
+            if (pressed) { 
+                SEND_STRING("h"); 
+            }
+            break;
+        case ARTSEY_Q:
+            if (pressed) { 
+                SEND_STRING("q"); 
+            }
+            break;
+        case ARTSEY_U:
+            if (pressed) { 
+                SEND_STRING("u"); 
+            }
+            break;
+        case ARTSEY_C:
+            if (pressed) { 
+                SEND_STRING("c"); 
+            }
+            break;
+        case ARTSEY_K:
+            if (pressed) { 
+                SEND_STRING("k"); 
+            }
+            break;
+        case ARTSEY_B:
+            if (pressed) { 
+                SEND_STRING("b"); 
+            }
+            break;
+        case ARTSEY_W:
+            if (pressed) { 
+                SEND_STRING("w"); 
+            }
+            break;
+        case ARTSEY_N:
+            if (pressed) { 
+                SEND_STRING("n"); 
+            }
+            break;
+        case ARTSEY_F:
+            if (pressed) { 
+                SEND_STRING("f"); 
+            }
+            break;
+        case ARTSEY_X:
+            if (pressed) { 
+                SEND_STRING("x"); 
+            }
+            break;
+        case ARTSEY_J:
+            if (pressed) { 
+                SEND_STRING("j"); 
+            }
+            break;
+        case ARTSEY_M:
+            if (pressed) { 
+                SEND_STRING("m"); 
+            }
+            break;
+        case ARTSEY_P:
+            if (pressed) { 
+                SEND_STRING("p"); 
+            }
+            break;
+        case ARTSEY_V:
+            if (pressed) { 
+                SEND_STRING("v"); 
+            }
+            break;
+        case ARTSEY_L:
+            if (pressed) { 
+                SEND_STRING("l"); 
+            }
+            break;
+        case ARTSEY_Z:
+            if (pressed) { 
+                SEND_STRING("z"); 
+            }
+            break;
+        case ARTSEY_D:
+            if (pressed) { 
+                SEND_STRING("d"); 
+            }
+            break;
+        case ARTSEY_G:
+            if (pressed) { 
+                SEND_STRING("g"); 
+            }
+            break;
+        case ARTSEY_SPACE:
+            if (pressed) { 
+                SEND_STRING(" ");  // Use SEND_STRING like reference firmware
+            }
+            break;
+        case ARTSEY_BACKSPACE:
+            if (pressed) { 
+                tap_code(KC_BSPC);  // Use tap_code for backspace
+            }
+            break;
+        case ARTSEY_ENTER:
+            if (pressed) { 
+                tap_code(KC_ENT);  // Use tap_code for enter
+            }
+            break;
+        // Punctuation
+        case ARTSEY_QUOTE:
+            if (pressed) { 
+                SEND_STRING("'"); 
+            }
+            break;
+        case ARTSEY_BANG:
+            if (pressed) { 
+                SEND_STRING("!"); 
+            }
+            break;
+        case ARTSEY_QUEST:
+            if (pressed) { 
+                SEND_STRING("?"); 
+            }
+            break;
+        case ARTSEY_PERIOD:
+            if (pressed) { 
+                SEND_STRING("."); 
+            }
+            break;
+        case ARTSEY_COMMA:
+            if (pressed) { 
+                SEND_STRING(","); 
+            }
+            break;
+        case ARTSEY_SLASH:
+            if (pressed) { 
+                SEND_STRING("/"); 
+            }
+            break;
+        // Control keys
+        case ARTSEY_TAB:
+            if (pressed) { 
+                tap_code(KC_TAB); 
+            }
+            break;
+        case ARTSEY_ESCAPE:
+            if (pressed) { 
+                tap_code(KC_ESC); 
+            }
+            break;
+        case ARTSEY_DEL:
+            if (pressed) { 
+                tap_code(KC_DEL); 
+            }
+            break;
+        // Modifiers
+        case ARTSEY_OS_SHIFT:
+            if (pressed) { 
+                add_oneshot_mods(MOD_BIT(KC_LSFT)); 
+            }
+            break;
+        case ARTSEY_CTRL:
+            if (pressed) {
+                if (get_mods() & MOD_MASK_CTRL) {
+                    del_mods(MOD_MASK_CTRL);
+                } else {
+                    add_mods(MOD_MASK_CTRL);
+                }
+            }
+            break;
+        case ARTSEY_GUI:
+            if (pressed) {
+                if (get_mods() & MOD_MASK_GUI) {
+                    del_mods(MOD_MASK_GUI);
+                } else {
+                    add_mods(MOD_MASK_GUI);
+                }
+            }
+            break;
+        case ARTSEY_ALT:
+            if (pressed) {
+                if (get_mods() & MOD_MASK_ALT) {
+                    del_mods(MOD_MASK_ALT);
+                } else {
+                    add_mods(MOD_MASK_ALT);
+                }
+            }
+            break;
+        case ARTSEY_SHIFT:
+            if (pressed) {
+                if (get_mods() & MOD_MASK_SHIFT) {
+                    del_mods(MOD_MASK_SHIFT);
+                } else {
+                    add_mods(MOD_MASK_SHIFT);
+                }
+            }
+            break;
+        case ARTSEY_PANIC:
+            if (pressed) { 
+                clear_mods(); 
+            }
+            break;
+    }
 }
 #endif
 
@@ -294,6 +689,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, QK_MIDI_OCTAVE_DOWN, QK_MIDI_OCTAVE_UP, _______, _______, _______, _______, KC_M, _______, _______, _______, _______,
     _______, _______, _______,                                     _______,                   _______,       _______,       _______,       _______
  ),
+ // ARTSEY layer removed - Artsey mode is handled on BASE layer via process_record_user
 };
 // clang-format on
 
@@ -301,6 +697,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 void set_base_layer_leds(void);
 void set_fn1_layer_leds(void);
 void set_fn2_layer_leds(void);
+void set_artsey_layer_leds(void);  // Forward declare
 
 // Helper function to set BASE layer constants (arrow keys, layer indicators)
 void set_base_layer_leds(void) {
@@ -386,6 +783,9 @@ void set_fn2_layer_leds(void) {
     ap2_led_mask_set_key(1, 8, COLOR_PINK);  // I key (row 1, col 8) - Piano mode
 #endif
     
+    // Mark Artsey mode key with orange so it's visible
+    ap2_led_mask_set_key(1, 7, COLOR_ORANGE);  // U key (row 1, col 7) - Artsey mode
+    
     // Space bar - purple
     ap2_led_mask_set_key(4, 6, COLOR_PURPLE);
 }
@@ -432,6 +832,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         return state;
     }
 #endif
+
+    // Don't override LEDs if Artsey mode is active
+    if (artsey_mode_active) {
+        return state;
+    }
     
     // Clear previous layer colors
     ap2_led_reset_foreground_color();
@@ -449,7 +854,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             break;
 #endif
         default:
-            reset_to_base_colors();
+            // Check if Artsey mode is active (handled on BASE layer, not a separate layer)
+            if (artsey_mode_active) {
+                set_artsey_layer_leds();
+            } else {
+                reset_to_base_colors();
+            }
             break;
     }
     return state;
@@ -516,7 +926,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     
-    // FN2 + M = Exit piano mode (NOTE: Currently not working reliably)
+    // FN2 + M = Exit piano mode
     // Check if FN2 is held (not necessarily highest layer, since PIANO might be active)
     if (piano_mode_active && layer_state_is(FN2) && record->event.pressed && keycode == KC_M) {
         piano_mode_off();
@@ -529,6 +939,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;  // Prevent default ESC key
     }
 #endif
+
+    // Artsey mode handlers
+    // FN2 + U = Enter Artsey mode
+    if (layer_state_is(FN2) && record->event.pressed && keycode == KC_U) {
+        if (get_highest_layer(layer_state) == FN2) {
+            if (!artsey_mode_active) {
+                artsey_mode_on();
+            }
+            return false;  // Prevent default U key
+        }
+    }
+    
+    // FN2 + M = Exit Artsey mode
+    if (artsey_mode_active && layer_state_is(FN2) && record->event.pressed && keycode == KC_M) {
+        artsey_mode_off();
+        return false;  // Prevent default M key
+    }
+    
+    // In Artsey mode, intercept Q/W/E/R/A/S/D/F keys and output Artsey letters
+    // This allows combos to work (they check BASE layer keycodes) while outputting Artsey letters
+    if (artsey_mode_active && record->event.pressed) {
+        switch(keycode) {
+            case KC_Q:  // Q -> Artsey S
+                SEND_STRING("s");
+                return false;
+            case KC_W:  // W -> Artsey T
+                SEND_STRING("t");
+                return false;
+            case KC_E:  // E -> Artsey R
+                SEND_STRING("r");
+                return false;
+            case KC_R:  // R -> Artsey A
+                SEND_STRING("a");
+                return false;
+            case KC_A:  // A -> Artsey O
+                SEND_STRING("o");
+                return false;
+            case KC_S:  // S -> Artsey I
+                SEND_STRING("i");
+                return false;
+            case KC_D:  // D -> Artsey Y
+                SEND_STRING("y");
+                return false;
+            case KC_F:  // F -> Artsey E
+                SEND_STRING("e");
+                return false;
+        }
+    }
+    // Note: ESC is NOT intercepted for Artsey mode - it remains functional
     
 #ifdef SEQUENCER_ENABLE
     // FN2 + E = Enter sequencer mode (intercept E key when FN2 is active)
