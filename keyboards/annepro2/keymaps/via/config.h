@@ -20,9 +20,8 @@
 
 // Combo timing - time window for keys to be pressed together (in milliseconds)
 // Lower value = faster response, but less time to press keys simultaneously
-#define COMBO_TERM 30  // Reduced to 30ms to minimize delay on base layer keys
+#define COMBO_TERM 100  // Reduced to 30ms to minimize delay on base layer keys
 
 // Note: Full debug output is too large for firmware size
 // Use MIDI monitoring tools instead (aseqdump, etc.)
-
 
