@@ -701,14 +701,14 @@ void set_artsey_layer_leds(void);  // Forward declare
 
 // Helper function to set BASE layer constants (arrow keys, layer indicators)
 void set_base_layer_leds(void) {
-    // Arrow keys on modifiers - constant red
-    ap2_led_sticky_set_key(3, 12, COLOR_RED); // Right Shift (Up)
-    ap2_led_sticky_set_key(4, 12, COLOR_RED); // Right Ctrl (Right)
-    ap2_led_sticky_set_key(4, 10, COLOR_RED); // FN1 (Left)
-    ap2_led_sticky_set_key(4, 11, COLOR_RED); // FN2 (Down)
+    // Arrow keys on modifiers - green for layer/modifier keys
+    ap2_led_sticky_set_key(3, 12, COLOR_GREEN); // Right Shift (Up)
+    ap2_led_sticky_set_key(4, 12, COLOR_GREEN); // Right Ctrl (Right)
+    ap2_led_sticky_set_key(4, 10, COLOR_GREEN); // FN1 (Left)
+    ap2_led_sticky_set_key(4, 11, COLOR_GREEN); // FN2 (Down)
     
-    // Layer indicator keys - red in BASE
-    ap2_led_sticky_set_key(2, 0, COLOR_RED);  // Caps Lock
+    // Layer indicator keys - green in BASE
+    ap2_led_sticky_set_key(2, 0, COLOR_GREEN);  // Caps Lock
     // FN1 and FN2 already set above as arrow keys
     
     // Right Alt (OSL FN1) - orange to indicate one-shot layer capability
