@@ -15,5 +15,5 @@ MAGIC_ENABLE = no  # Magic Keycodes (NKRO toggle, GUI/ALT swap, etc.) - disabled
 MIDI_ENABLE = yes
 # MIDI_ADVANCED is defined in config.h (required for keymap MIDI keycodes)
 
-# Enable combos for Artsey layout
-COMBO_ENABLE = yes
+# Combos disabled (was used for Artsey layout)
+COMBO_ENABLE = no
