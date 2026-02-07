@@ -237,38 +237,6 @@ void del_key_bit(report_nkro_t* nkro_report, uint8_t code) {
 }
 #endif
 
-/** \brief add key to report
- *
- * FIXME: Needs doc
- */
-void add_key_to_report(uint8_t key) {
-#ifdef NKRO_ENABLE
-    if (keyboard_protocol && keymap_config.nkro) {
-        add_key_bit(nkro_report, key);
-        return;
-    }
-#endif
-    add_key_byte(keyboard_report, key);
-}
-
-/** \brief del key from report
- *
- * FIXME: Needs doc
- */
-void del_key_from_report(uint8_t key) {
-#ifdef NKRO_ENABLE
-    if (keyboard_protocol && keymap_config.nkro) {
-        del_key_bit(nkro_report, key);
-        return;
-    }
-#endif
-    del_key_byte(keyboard_report, key);
-}
-
-/** \brief clear key from report
- *
- * FIXME: Needs doc
- */
 void clear_keys_from_report(void) {
     // not clear mods
 #ifdef NKRO_ENABLE

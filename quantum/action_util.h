@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "report.h"
 #include "modifiers.h"
 
+extern uint8_t real_mods;
+extern uint8_t weak_mods;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -121,3 +124,9 @@ void neutralize_flashing_modifiers(uint8_t active_mods);
 #ifdef __cplusplus
 }
 #endif
+
+//---------------------
+void User_send_6kro_report(void);
+void User_send_nkro_report(void);
+void User_Clear_Board(void);
+void User_Send_Key(uint8_t Code, bool Status);

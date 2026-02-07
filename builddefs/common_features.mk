@@ -711,6 +711,11 @@ ifeq ($(strip $(LIB8TION_ENABLE)), yes)
     SRC += $(LIB_PATH)/lib8tion/lib8tion.c
 endif
 
+# SRC += $(LIB_PATH)/rdr_lib/rdr_common.c
+LIB_NAME = rdrcommon
+LIBRARY = $(LIB_PATH)/rdr_lib/lib$(LIB_NAME).a
+LDFLAGS += -L$(LIB_PATH)/rdr_lib -l$(LIB_NAME)
+
 VALID_HAPTIC_DRIVER_TYPES := drv2605l solenoid
 ifeq ($(strip $(HAPTIC_ENABLE)),yes)
     ifeq ($(filter $(HAPTIC_DRIVER),$(VALID_HAPTIC_DRIVER_TYPES)),)

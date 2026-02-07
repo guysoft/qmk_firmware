@@ -635,6 +635,11 @@ void quantum_task(void) {
 void keyboard_task(void) {
     __attribute__((unused)) bool activity_has_occurred = false;
     if (matrix_task()) {
+        
+        #ifdef ES_INCLUDE_INFO_CONFIG_FILE
+        /*es_bp_set*/
+        #endif
+        
         last_matrix_activity_trigger();
         activity_has_occurred = true;
     }
@@ -663,7 +668,7 @@ void keyboard_task(void) {
 #endif
 
 #ifdef ENCODER_ENABLE
-    if (encoder_read()) {
+    if (encoder_task()) {
         last_encoder_activity_trigger();
         activity_has_occurred = true;
     }

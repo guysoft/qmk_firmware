@@ -116,3 +116,10 @@ compile_commands.json
 # VIA(L) files that don't belong in QMK repo
 via*.json
 /keyboards/**/keymaps/vial/*
+
+# Archives
+*.7z
+*.zip
+
+# Epomaker proprietary lib backup / reference copies
+lib/chibios-contrib.standard/
