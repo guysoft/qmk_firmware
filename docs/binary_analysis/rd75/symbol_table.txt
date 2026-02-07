@@ -1,0 +1,467 @@
+In archive /tmp/RD75/lib/rdr_lib/librdrcommon.a:
+
+rdr_common.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 rdr_common.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.es_keyboard_leds	00000000 .text.es_keyboard_leds
+00000000 l    d  .text.rgb_matrix_driver_set_color	00000000 .text.rgb_matrix_driver_set_color
+00000000 l    d  .text.rgb_matrix_driver_set_color_all	00000000 .text.rgb_matrix_driver_set_color_all
+00000000 l    d  .text.IAPROM_WORD_PROGRAM	00000000 .text.IAPROM_WORD_PROGRAM
+00000000 l     F .text.IAPROM_WORD_PROGRAM	0000002e IAPROM_WORD_PROGRAM
+00000000 l    d  .text.ee_verify_pagefull_write_variable	00000000 .text.ee_verify_pagefull_write_variable
+00000000 l     F .text.ee_verify_pagefull_write_variable	00000088 ee_verify_pagefull_write_variable
+00000000 l    d  .text.rgb_matrix_driver_init	00000000 .text.rgb_matrix_driver_init
+00000000 l    d  .text.IAPROM_PAGE_ERASE.isra.0	00000000 .text.IAPROM_PAGE_ERASE.isra.0
+00000000 l     F .text.IAPROM_PAGE_ERASE.isra.0	0000001e IAPROM_PAGE_ERASE.isra.0
+00000000 l    d  .text.ee_format	00000000 .text.ee_format
+00000000 l     F .text.ee_format	00000038 ee_format
+00000000 l    d  .text.app_2g4_buffer_full	00000000 .text.app_2g4_buffer_full
+00000000 l    d  .text.app_2g4_buffer_empty	00000000 .text.app_2g4_buffer_empty
+00000000 l    d  .text.app_2g4_buffer_rev_add	00000000 .text.app_2g4_buffer_rev_add
+00000000 l    d  .text.app_2g4_buffer_send_add	00000000 .text.app_2g4_buffer_send_add
+00000000 l    d  .text.Emi_Init	00000000 .text.Emi_Init
+00000000 l    d  .text.Emi_Write_Data	00000000 .text.Emi_Write_Data
+00000000 l    d  .text.es_ble_spi_init	00000000 .text.es_ble_spi_init
+00000000 l    d  .text.es_ble_spi_deinit	00000000 .text.es_ble_spi_deinit
+00000000 l    d  .text.es_spi_send_recv_by_dma	00000000 .text.es_spi_send_recv_by_dma
+00000000 l    d  .text.Emi_Read_Data	00000000 .text.Emi_Read_Data
+00000000 l    d  .text.Spi_Main_Loop	00000000 .text.Spi_Main_Loop
+00000000 l    d  .text.Spi_Send_Commad	00000000 .text.Spi_Send_Commad
+00000000 l    d  .text.Spi_Ack_Send_Commad	00000000 .text.Spi_Ack_Send_Commad
+00000000 l    d  .text.Mode_Synchronization	00000000 .text.Mode_Synchronization
+00000000 l    d  .text.Ble_Name_Synchronization	00000000 .text.Ble_Name_Synchronization
+00000000 l    d  .text.User_bluetooth_send_keyboard	00000000 .text.User_bluetooth_send_keyboard
+00000000 l    d  .text.es_send_keyboard	00000000 .text.es_send_keyboard
+00000000 l    d  .text.es_send_nkro	00000000 .text.es_send_nkro
+00000000 l    d  .text.es_send_mouse	00000000 .text.es_send_mouse
+00000000 l    d  .text.es_send_extra	00000000 .text.es_send_extra
+00000000 l    d  .text.bootloader_jump	00000000 .text.bootloader_jump
+00000000 l    d  .text.mcu_reset	00000000 .text.mcu_reset
+00000000 l    d  .text.es_mcu_reset	00000000 .text.es_mcu_reset
+00000000 l    d  .text.Save_Flash_Set	00000000 .text.Save_Flash_Set
+00000000 l    d  .text.User_Systime_Init	00000000 .text.User_Systime_Init
+00000000 l    d  .text.User_Systime_Deinit	00000000 .text.User_Systime_Deinit
+00000000 l    d  .text.Init_Gpio_Infomation	00000000 .text.Init_Gpio_Infomation
+00000000 l    d  .text.User_Sleep	00000000 .text.User_Sleep
+00000000 l    d  .text.Get_Spi_Return_Data	00000000 .text.Get_Spi_Return_Data
+00000000 l    d  .text.User_Wakeup	00000000 .text.User_Wakeup
+00000000 l    d  .text.es_change_qmk_nkro_mode_enable	00000000 .text.es_change_qmk_nkro_mode_enable
+00000000 l    d  .text.es_change_qmk_nkro_mode_disable	00000000 .text.es_change_qmk_nkro_mode_disable
+00000000 l    d  .text.User_Keyboard_Post_Init	00000000 .text.User_Keyboard_Post_Init
+00000000 l    d  .text.User_Usb_Init	00000000 .text.User_Usb_Init
+00000000 l    d  .text.es_restart_usb_driver	00000000 .text.es_restart_usb_driver
+00000000 l    d  .text.Usb_Disconnect	00000000 .text.Usb_Disconnect
+00000000 l    d  .text.User_Usb_Deinit	00000000 .text.User_Usb_Deinit
+00000000 l    d  .text.clamp_length	00000000 .text.clamp_length
+00000000 l    d  .text.clamp_length_user	00000000 .text.clamp_length_user
+00000000 l    d  .text.eeprom_driver_erase	00000000 .text.eeprom_driver_erase
+00000000 l     O .bss.g_es_flash_eeprom_table	000004c2 g_es_flash_eeprom_table
+00000000 l    d  .text.eeprom_driver_init	00000000 .text.eeprom_driver_init
+00000000 l    d  .text.eeprom_read_block	00000000 .text.eeprom_read_block
+00000000 l    d  .text.eeprom_write_block	00000000 .text.eeprom_write_block
+00000000 l    d  .text.eeprom_read_block_user	00000000 .text.eeprom_read_block_user
+00000000 l    d  .text.Init_Keyboard_Infomation	00000000 .text.Init_Keyboard_Infomation
+00000000 l    d  .text.eeprom_write_block_user	00000000 .text.eeprom_write_block_user
+00000000 l    d  .text.encoder_wait_pullup_charge	00000000 .text.encoder_wait_pullup_charge
+00000000 l    d  .text.encoder_quadrature_init_pin	00000000 .text.encoder_quadrature_init_pin
+00000000 l    d  .text.encoder_quadrature_read_pin	00000000 .text.encoder_quadrature_read_pin
+00000000 l    d  .text.encoder_quadrature_post_init_kb	00000000 .text.encoder_quadrature_post_init_kb
+00000000 l    d  .text.encoder_quadrature_post_init	00000000 .text.encoder_quadrature_post_init
+00000000 l    d  .text.encoder_driver_init	00000000 .text.encoder_driver_init
+00000000 l    d  .text.encoder_quadrature_handle_read	00000000 .text.encoder_quadrature_handle_read
+00000000 l    d  .text.encoder_driver_task	00000000 .text.encoder_driver_task
+00000000 l    d  .text.User_Adc_Init	00000000 .text.User_Adc_Init
+00000000 l    d  .text.User_Adc_Deinit	00000000 .text.User_Adc_Deinit
+00000000 l    d  .text.U16_Buff_Clear	00000000 .text.U16_Buff_Clear
+00000000 l    d  .text.Init_Batt_Infomation	00000000 .text.Init_Batt_Infomation
+00000000 l    d  .text.User_Adc_Batt_Power_Up_Init	00000000 .text.User_Adc_Batt_Power_Up_Init
+00000000 l    d  .text.User_Adc_Batt_Number	00000000 .text.User_Adc_Batt_Number
+00000000 l    d  .text.User_Pwm_Deinit	00000000 .text.User_Pwm_Deinit
+00000000 l    d  .text.rgb_matrix_driver_flush_pwm_dma_start	00000000 .text.rgb_matrix_driver_flush_pwm_dma_start
+00000000 l    d  .text.rgb_matrix_driver_flush	00000000 .text.rgb_matrix_driver_flush
+00000000 l    d  .text.Led_Power_Low_Show	00000000 .text.Led_Power_Low_Show
+00000000 l    d  .text.Led_Rf_Mode_Show	00000000 .text.Led_Rf_Mode_Show
+00000000 l    d  .text.Led_Batt_Number_Show	00000000 .text.Led_Batt_Number_Show
+00000000 l    d  .text.Led_Point_Flash_Show	00000000 .text.Led_Point_Flash_Show
+00000000 l    d  .text.User_Test_Colour_Show	00000000 .text.User_Test_Colour_Show
+00000000 l    d  .text.Logo_Init	00000000 .text.Logo_Init
+00000000 l    d  .text.User_Keyboard_Reset	00000000 .text.User_Keyboard_Reset
+00000000 l    d  .text.Board_Wakeup_Init	00000000 .text.Board_Wakeup_Init
+00000000 l    d  .text.es_chibios_user_idle_loop_hook	00000000 .text.es_chibios_user_idle_loop_hook
+00000000 l    d  .text.User_Keyboard_Init	00000000 .text.User_Keyboard_Init
+00000000 l    d  .text.Logo_Pwm_Rgb_Updata	00000000 .text.Logo_Pwm_Rgb_Updata
+00000000 l    d  .text.Logo_Pwm_Ds_Updata	00000000 .text.Logo_Pwm_Ds_Updata
+00000000 l    d  .text.Logo_Wave_Rgb_mode_Show	00000000 .text.Logo_Wave_Rgb_mode_Show
+00000000 l    d  .text.Logo_Wave_Ds_mode_Show	00000000 .text.Logo_Wave_Ds_mode_Show
+00000000 l    d  .text.Logo_Spectrum_mode_Show	00000000 .text.Logo_Spectrum_mode_Show
+00000000 l    d  .text.Logo_Breath_mode_Show	00000000 .text.Logo_Breath_mode_Show
+00000000 l    d  .text.Logo_Light_mode_Show	00000000 .text.Logo_Light_mode_Show
+00000000 l    d  .text.Logo_Off_mode_Show	00000000 .text.Logo_Off_mode_Show
+00000000 l    d  .text.Logo_Mode_Show	00000000 .text.Logo_Mode_Show
+00000000 l    d  .text.User_Point_Show	00000000 .text.User_Point_Show
+00000000 l    d  .text.User_Led_Show	00000000 .text.User_Led_Show
+00000000 l    d  .text.User_Via_Qmk_Logo_Get_Value	00000000 .text.User_Via_Qmk_Logo_Get_Value
+00000000 l    d  .text.User_Via_Qmk_Logo_Set_Value	00000000 .text.User_Via_Qmk_Logo_Set_Value
+00000000 l    d  .text.User_Via_Qmk_Logo_Command	00000000 .text.User_Via_Qmk_Logo_Command
+00000000 l    d  .text.Vector4C	00000000 .text.Vector4C
+00000000 l    d  .text.Vector54	00000000 .text.Vector54
+00000000 l    d  .text.Vector58	00000000 .text.Vector58
+00000000 l    d  .text.Vector7C	00000000 .text.Vector7C
+00000000 l    d  .text.Vector80	00000000 .text.Vector80
+00000000 l    d  .text.Vector84	00000000 .text.Vector84
+00000000 l    d  .text.Vector68	00000000 .text.Vector68
+00000000 l    d  .text.Vector5C	00000000 .text.Vector5C
+00000000 l    d  .text.Vector78	00000000 .text.Vector78
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l    d  .bss.Batt_Led_Count	00000000 .bss.Batt_Led_Count
+00000000 l    d  .bss.Ble_Name_Spi_Send	00000000 .bss.Ble_Name_Spi_Send
+00000000 l    d  .bss.DMA_list	00000000 .bss.DMA_list
+00000000 l    d  .bss.Emi_Test_Start	00000000 .bss.Emi_Test_Start
+00000000 l    d  .bss.Func_Time_3s_Count	00000000 .bss.Func_Time_3s_Count
+00000000 l    d  .bss.Init_Spi_100ms_Delay	00000000 .bss.Init_Spi_100ms_Delay
+00000000 l    d  .bss.Key_2p4g_Status	00000000 .bss.Key_2p4g_Status
+00000000 l    d  .bss.Key_Ble_1_Status	00000000 .bss.Key_Ble_1_Status
+00000000 l    d  .bss.Key_Ble_2_Status	00000000 .bss.Key_Ble_2_Status
+00000000 l    d  .bss.Key_Ble_3_Status	00000000 .bss.Key_Ble_3_Status
+00000000 l    d  .bss.Key_Fn_Status	00000000 .bss.Key_Fn_Status
+00000000 l    d  .bss.Key_Reset_Status	00000000 .bss.Key_Reset_Status
+00000000 l    d  .bss.Keyboard_Reset	00000000 .bss.Keyboard_Reset
+00000000 l    d  .bss.Keyboard_Status	00000000 .bss.Keyboard_Status
+00000000 l    d  .bss.Led_Flash_Busy	00000000 .bss.Led_Flash_Busy
+00000000 l    d  .bss.Led_Off_Start	00000000 .bss.Led_Off_Start
+00000000 l    d  .bss.Led_Point_Count	00000000 .bss.Led_Point_Count
+00000000 l    d  .bss.Led_Power_Up	00000000 .bss.Led_Power_Up
+00000000 l    d  .bss.Led_Power_Up_Delay	00000000 .bss.Led_Power_Up_Delay
+00000000 l    d  .bss.Led_Rf_Pair_Flg	00000000 .bss.Led_Rf_Pair_Flg
+00000000 l    d  .bss.Logo_Flash_Count	00000000 .bss.Logo_Flash_Count
+00000000 l    d  .bss.Logo_Led_Count	00000000 .bss.Logo_Led_Count
+00000000 l    d  .bss.Logo_Play_Point	00000000 .bss.Logo_Play_Point
+00000000 l    d  .bss.Logo_Pwm_B	00000000 .bss.Logo_Pwm_B
+00000000 l    d  .bss.Logo_Pwm_G	00000000 .bss.Logo_Pwm_G
+00000000 l    d  .bss.Logo_Pwm_R	00000000 .bss.Logo_Pwm_R
+00000000 l    d  .bss.Mac_Win_Point_Count	00000000 .bss.Mac_Win_Point_Count
+00000000 l    d  .bss.Mode_Synchronization_Signal	00000000 .bss.Mode_Synchronization_Signal
+00000000 l    d  .bss.Point_Flash_Count	00000000 .bss.Point_Flash_Count
+00000000 l    d  .bss.Repet_Send_Count	00000000 .bss.Repet_Send_Count
+00000000 l    d  .bss.Reset_Save_Flash	00000000 .bss.Reset_Save_Flash
+00000000 l    d  .bss.Save_Flash	00000000 .bss.Save_Flash
+00000000 l    d  .bss.Save_Flash_3S_Count	00000000 .bss.Save_Flash_3S_Count
+00000000 l    d  .bss.Send_Key_Type	00000000 .bss.Send_Key_Type
+00000000 l    d  .bss.Spi_Send_Recv_Flg	00000000 .bss.Spi_Send_Recv_Flg
+00000000 l    d  .bss.Systick_10ms_Count	00000000 .bss.Systick_10ms_Count
+00000000 l    d  .bss.Systick_6ms_Count	00000000 .bss.Systick_6ms_Count
+00000000 l    d  .bss.Systick_Interval_Count	00000000 .bss.Systick_Interval_Count
+00000000 l    d  .bss.Systick_Led_Count	00000000 .bss.Systick_Led_Count
+00000000 l    d  .bss.Test_Colour	00000000 .bss.Test_Colour
+00000000 l    d  .bss.Test_Led	00000000 .bss.Test_Led
+00000000 l    d  .bss.Time_3s_Count	00000000 .bss.Time_3s_Count
+00000000 l    d  .bss.Usb_Change_Mode_Delay	00000000 .bss.Usb_Change_Mode_Delay
+00000000 l    d  .bss.Usb_Change_Mode_Wakeup	00000000 .bss.Usb_Change_Mode_Wakeup
+00000000 l    d  .bss.Usb_Dis_Connect	00000000 .bss.Usb_Dis_Connect
+00000000 l    d  .bss.Usb_If_Ok_Led	00000000 .bss.Usb_If_Ok_Led
+00000000 l    d  .bss.Usb_Suspend_Delay	00000000 .bss.Usb_Suspend_Delay
+00000000 l    d  .bss.User_Adc_Batt	00000000 .bss.User_Adc_Batt
+00000000 l    d  .bss.User_Adc_Batt_Count	00000000 .bss.User_Adc_Batt_Count
+00000000 l    d  .bss.User_Batt_10ms_Count	00000000 .bss.User_Batt_10ms_Count
+00000000 l    d  .bss.User_Batt_BaiFen	00000000 .bss.User_Batt_BaiFen
+00000000 l    d  .bss.User_Batt_Old_BaiFen	00000000 .bss.User_Batt_Old_BaiFen
+00000000 l    d  .bss.User_Batt_Power_Up	00000000 .bss.User_Batt_Power_Up
+00000000 l    d  .bss.User_Batt_Power_Up_Delay	00000000 .bss.User_Batt_Power_Up_Delay
+00000000 l    d  .bss.User_Batt_Power_Up_Delay_100ms_Count	00000000 .bss.User_Batt_Power_Up_Delay_100ms_Count
+00000000 l    d  .bss.User_Batt_Send_Spi	00000000 .bss.User_Batt_Send_Spi
+00000000 l    d  .bss.User_Batt_Time_15S_Count	00000000 .bss.User_Batt_Time_15S_Count
+00000000 l    d  .bss.User_Key_Batt_Count	00000000 .bss.User_Key_Batt_Count
+00000000 l    d  .bss.User_Key_Batt_Num_Show	00000000 .bss.User_Key_Batt_Num_Show
+00000000 l    d  .bss.User_Power_Low	00000000 .bss.User_Power_Low
+00000000 l    d  .bss.User_Power_Low_Count	00000000 .bss.User_Power_Low_Count
+00000000 l    d  .bss.User_Scan_Batt	00000000 .bss.User_Scan_Batt
+00000000 l    d  .bss.app_2g4_data_rev	00000000 .bss.app_2g4_data_rev
+00000000 l    d  .bss.app_2g4_data_send	00000000 .bss.app_2g4_data_send
+00000000 l    d  .bss.encoder_pulses	00000000 .bss.encoder_pulses
+00000000 l     O .bss.encoder_pulses	00000001 encoder_pulses
+00000000 l    d  .bss.encoder_state	00000000 .bss.encoder_state
+00000000 l     O .bss.encoder_state	00000001 encoder_state
+00000000 l    d  .bss.es_eeprom_init_flag	00000000 .bss.es_eeprom_init_flag
+00000000 l    d  .bss.es_qmk_driver	00000000 .bss.es_qmk_driver
+00000000 l    d  .bss.es_stdby_pin_state	00000000 .bss.es_stdby_pin_state
+00000000 l    d  .bss.g_es_flash_eeprom_table	00000000 .bss.g_es_flash_eeprom_table
+00000000 l    d  .bss.g_es_pwm_rgb_matrix_array_dma_buf	00000000 .bss.g_es_pwm_rgb_matrix_array_dma_buf
+00000000 l    d  .bss.g_es_spi_rx_buf	00000000 .bss.g_es_spi_rx_buf
+00000000 l    d  .bss.g_es_spi_tx_buf	00000000 .bss.g_es_spi_tx_buf
+00000000 l    d  .bss.g_usb_sof_frame_id	00000000 .bss.g_usb_sof_frame_id
+00000000 l    d  .bss.g_usb_sof_frame_id_last	00000000 .bss.g_usb_sof_frame_id_last
+00000000 l    d  .bss.thisCount	00000000 .bss.thisCount
+00000000 l     O .bss.thisCount	00000001 thisCount
+00000000 l    d  .data.Ble_Name_Spi_Count	00000000 .data.Ble_Name_Spi_Count
+00000000 l    d  .data.Init_Spi_Power_Up	00000000 .data.Init_Spi_Power_Up
+00000000 l    d  .data.Keyboard_Info	00000000 .data.Keyboard_Info
+00000000 l    d  .data.LED_Mix_Colour_Tab	00000000 .data.LED_Mix_Colour_Tab
+00000000 l    d  .data.Led_Batt_Index_Tab	00000000 .data.Led_Batt_Index_Tab
+00000000 l    d  .data.Led_Colour_Tab	00000000 .data.Led_Colour_Tab
+00000000 l    d  .data.Led_Wave_Pwm_Tab	00000000 .data.Led_Wave_Pwm_Tab
+00000000 l    d  .data.Logo_Index_Tab	00000000 .data.Logo_Index_Tab
+00000000 l    d  .data.Spi_Interval	00000000 .data.Spi_Interval
+00000000 l    d  .data.Temp_System_Led_Status	00000000 .data.Temp_System_Led_Status
+00000000 l    d  .rodata.CSWTCH.528	00000000 .rodata.CSWTCH.528
+00000000 l     O .rodata.CSWTCH.528	00000004 CSWTCH.528
+00000000 l    d  .rodata.CSWTCH.529	00000000 .rodata.CSWTCH.529
+00000000 l     O .rodata.CSWTCH.529	00000004 CSWTCH.529
+00000000 l    d  .rodata.CSWTCH.530	00000000 .rodata.CSWTCH.530
+00000000 l     O .rodata.CSWTCH.530	00000004 CSWTCH.530
+00000000 l    d  .rodata.SPI2_InitStruct	00000000 .rodata.SPI2_InitStruct
+00000000 l    d  .rodata.adc_initStruct	00000000 .rodata.adc_initStruct
+00000000 l    d  .rodata.encoder_LUT	00000000 .rodata.encoder_LUT
+00000000 l     O .rodata.encoder_LUT	00000010 encoder_LUT
+00000000 l    d  .rodata.es_user_driver	00000000 .rodata.es_user_driver
+00000000 l    d  .rodata.g_es_dma_ch2alt_cfg	00000000 .rodata.g_es_dma_ch2alt_cfg
+00000000 l    d  .rodata.g_es_dma_ch2pri_cfg	00000000 .rodata.g_es_dma_ch2pri_cfg
+00000000 l    d  .rodata.rgb_matrix_driver	00000000 .rodata.rgb_matrix_driver
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
+00000000 g     F .text.es_keyboard_leds	00000018 es_keyboard_leds
+00000000 g     F .text.rgb_matrix_driver_set_color	000000c4 rgb_matrix_driver_set_color
+00000105       O *COM*	00000001 rgb_matrix_ws2812_array
+00000000 g     O .bss.g_es_pwm_rgb_matrix_array_dma_buf	0000082a g_es_pwm_rgb_matrix_array_dma_buf
+00000000 g     F .text.rgb_matrix_driver_set_color_all	0000001e rgb_matrix_driver_set_color_all
+00000000         *UND*	00000000 md_fc_unlock
+00000000         *UND*	00000000 md_fc_program
+00000000         *UND*	00000000 md_fc_lock
+00000000 g     F .text.rgb_matrix_driver_init	000000b4 rgb_matrix_driver_init
+00000000         *UND*	00000000 _pal_lld_setgroupmode
+00000000         *UND*	00000000 rgb_matrix_get_val
+00000000         *UND*	00000000 memset
+00000000         *UND*	00000000 md_fc_page_erase
+00000000 g     F .text.app_2g4_buffer_full	00000024 app_2g4_buffer_full
+00000000 g     F .text.app_2g4_buffer_empty	0000001c app_2g4_buffer_empty
+00000000 g     F .text.app_2g4_buffer_rev_add	0000001c app_2g4_buffer_rev_add
+00000000 g     F .text.app_2g4_buffer_send_add	0000001c app_2g4_buffer_send_add
+00000000 g     F .text.Emi_Init	00000034 Emi_Init
+00000000 g     F .text.Emi_Write_Data	00000020 Emi_Write_Data
+00000000         *UND*	00000000 raw_hid_send
+00000000 g     F .text.es_ble_spi_init	0000006c es_ble_spi_init
+00000000         *UND*	00000000 md_gpio_init
+00000000         *UND*	00000000 md_spi_init
+00000000 g     F .text.es_ble_spi_deinit	0000004c es_ble_spi_deinit
+00000000 g     F .text.es_spi_send_recv_by_dma	000000bc es_spi_send_recv_by_dma
+00000000 g     F .text.Emi_Read_Data	0000006c Emi_Read_Data
+00000000 g     F .text.Spi_Main_Loop	00000070 Spi_Main_Loop
+00000500       O *COM*	00000001 app_2g4_data
+00000000 g     F .text.Spi_Send_Commad	00000100 Spi_Send_Commad
+00000000 g     F .text.Spi_Ack_Send_Commad	00000060 Spi_Ack_Send_Commad
+00000000 g     F .text.Mode_Synchronization	00000034 Mode_Synchronization
+00000000 g     F .text.Ble_Name_Synchronization	00000040 Ble_Name_Synchronization
+00000000 g     F .text.User_bluetooth_send_keyboard	000000b8 User_bluetooth_send_keyboard
+00000000         *UND*	00000000 memcpy
+00000000         *UND*	00000000 __gnu_thumb1_case_sqi
+00000000 g     F .text.es_send_keyboard	0000002c es_send_keyboard
+00000000 g     F .text.es_send_nkro	0000002c es_send_nkro
+00000000 g     F .text.es_send_mouse	0000002c es_send_mouse
+00000000 g     F .text.es_send_extra	0000002c es_send_extra
+00000000 g     F .text.bootloader_jump	00000080 bootloader_jump
+00000000 g     F .text.mcu_reset	0000005c mcu_reset
+00000000 g     F .text.es_mcu_reset	00000006 es_mcu_reset
+00000000 g     F .text.Save_Flash_Set	00000018 Save_Flash_Set
+00000000 g     F .text.User_Systime_Init	00000048 User_Systime_Init
+00000000 g     F .text.User_Systime_Deinit	0000001c User_Systime_Deinit
+00000000 g     F .text.Init_Gpio_Infomation	000000cc Init_Gpio_Infomation
+00000000 g     F .text.User_Sleep	00000040 User_Sleep
+00000000 g     F .text.Get_Spi_Return_Data	00000130 Get_Spi_Return_Data
+00000000 g     F .text.User_Wakeup	00000018 User_Wakeup
+00000000 g     F .text.es_change_qmk_nkro_mode_enable	0000002c es_change_qmk_nkro_mode_enable
+00000000         *UND*	00000000 clear_keyboard
+00000000         *UND*	00000000 keymap_config
+00000000 g     F .text.es_change_qmk_nkro_mode_disable	0000002c es_change_qmk_nkro_mode_disable
+00000000 g     F .text.User_Keyboard_Post_Init	00000044 User_Keyboard_Post_Init
+00000000         *UND*	00000000 biton
+00000000         *UND*	00000000 layer_on
+00000000         *UND*	00000000 layer_state
+00000000 g     F .text.User_Usb_Init	00000028 User_Usb_Init
+00000000 g     F .text.es_restart_usb_driver	00000038 es_restart_usb_driver
+00000000         *UND*	00000000 ald_usb_device_components_init
+00000000         *UND*	00000000 ald_usb_dev_connect
+00000000         *UND*	00000000 ald_usb_int_register
+00000000 g     F .text.Usb_Disconnect	00000030 Usb_Disconnect
+00000000         *UND*	00000000 ald_usb_int_unregister
+00000000         *UND*	00000000 ald_usb_dev_disconnect
+00000000 g     F .text.User_Usb_Deinit	00000024 User_Usb_Deinit
+00000000 g     F .text.clamp_length	00000012 clamp_length
+00000000 g     F .text.clamp_length_user	00000010 clamp_length_user
+00000000 g     F .text.eeprom_driver_erase	0000001c eeprom_driver_erase
+00000000 g     F .text.eeprom_driver_init	00000204 eeprom_driver_init
+00000004       O *COM*	00000004 g_tst_remap_offset
+00000000 g     F .text.eeprom_read_block	00000034 eeprom_read_block
+00000000 g     F .text.eeprom_write_block	0000012c eeprom_write_block
+00000000 g     F .text.eeprom_read_block_user	0000003c eeprom_read_block_user
+00000000 g     F .text.Init_Keyboard_Infomation	000000d4 Init_Keyboard_Infomation
+00000000 g     F .text.eeprom_write_block_user	00000088 eeprom_write_block_user
+00000000         *UND*	00000000 memcmp
+00000000  w    F .text.encoder_wait_pullup_charge	0000000a encoder_wait_pullup_charge
+00000000         *UND*	00000000 chThdSleep
+00000000  w    F .text.encoder_quadrature_init_pin	00000028 encoder_quadrature_init_pin
+00000000  w    F .text.encoder_quadrature_read_pin	00000024 encoder_quadrature_read_pin
+00000000  w    F .text.encoder_quadrature_post_init_kb	00000002 encoder_quadrature_post_init_kb
+00000000 g     F .text.encoder_quadrature_post_init	0000005c encoder_quadrature_post_init
+00000000 g     F .text.encoder_driver_init	00000014 encoder_driver_init
+00000000 g     F .text.encoder_quadrature_handle_read	00000070 encoder_quadrature_handle_read
+00000000         *UND*	00000000 encoder_queue_event
+00000000  w    F .text.encoder_driver_task	00000034 encoder_driver_task
+00000000 g     F .text.User_Adc_Init	0000008c User_Adc_Init
+00000000         *UND*	00000000 md_adc_calibration
+00000000         *UND*	00000000 md_adc_init
+00000000 g     F .text.User_Adc_Deinit	00000024 User_Adc_Deinit
+00000000 g     F .text.U16_Buff_Clear	0000000c U16_Buff_Clear
+00000000 g     F .text.Init_Batt_Infomation	0000008c Init_Batt_Infomation
+00000000         *UND*	00000000 __aeabi_uidiv
+00000000         *UND*	00000000 __aeabi_idiv
+00000000 g     F .text.User_Adc_Batt_Power_Up_Init	0000011c User_Adc_Batt_Power_Up_Init
+00000000 g     F .text.User_Adc_Batt_Number	000001e0 User_Adc_Batt_Number
+00000000 g     F .text.User_Pwm_Deinit	0000004c User_Pwm_Deinit
+00000000 g     F .text.rgb_matrix_driver_flush_pwm_dma_start	0000010c rgb_matrix_driver_flush_pwm_dma_start
+00000000         *UND*	00000000 rgb_matrix_is_enabled
+00000000 g     F .text.rgb_matrix_driver_flush	00000024 rgb_matrix_driver_flush
+00000000 g     F .text.Led_Power_Low_Show	0000005c Led_Power_Low_Show
+00000000         *UND*	00000000 rgb_matrix_set_color
+00000000 g     F .text.Led_Rf_Mode_Show	000000e0 Led_Rf_Mode_Show
+00000000 g     F .text.Led_Batt_Number_Show	000000d0 Led_Batt_Number_Show
+00000000 g     O .data.Led_Wave_Pwm_Tab	00000080 Led_Wave_Pwm_Tab
+00000000 g     F .text.Led_Point_Flash_Show	00000088 Led_Point_Flash_Show
+00000000 g     F .text.User_Test_Colour_Show	00000034 User_Test_Colour_Show
+00000000 g     F .text.Logo_Init	00000044 Logo_Init
+00000000 g     F .text.User_Keyboard_Reset	00000044 User_Keyboard_Reset
+00000000         *UND*	00000000 eeconfig_disable
+00000000         *UND*	00000000 soft_reset_keyboard
+00000000 g     F .text.Board_Wakeup_Init	000000c0 Board_Wakeup_Init
+00000000 g     F .text.es_chibios_user_idle_loop_hook	00000564 es_chibios_user_idle_loop_hook
+00000000         *UND*	00000000 dynamic_keymap_get_keycode
+00000000         *UND*	00000000 register_code
+00000000         *UND*	00000000 unregister_code
+00000000         *UND*	00000000 USBD1
+00000000 g     F .text.User_Keyboard_Init	000000ac User_Keyboard_Init
+00000000 g     F .text.Logo_Pwm_Rgb_Updata	0000003c Logo_Pwm_Rgb_Updata
+00000000 g     F .text.Logo_Pwm_Ds_Updata	0000004c Logo_Pwm_Ds_Updata
+00000000 g     F .text.Logo_Wave_Rgb_mode_Show	00000090 Logo_Wave_Rgb_mode_Show
+00000000 g     O .data.LED_Mix_Colour_Tab	00000300 LED_Mix_Colour_Tab
+00000000 g     F .text.Logo_Wave_Ds_mode_Show	00000098 Logo_Wave_Ds_mode_Show
+00000000 g     F .text.Logo_Spectrum_mode_Show	00000080 Logo_Spectrum_mode_Show
+00000000 g     F .text.Logo_Breath_mode_Show	00000088 Logo_Breath_mode_Show
+00000000 g     F .text.Logo_Light_mode_Show	00000058 Logo_Light_mode_Show
+00000000 g     F .text.Logo_Off_mode_Show	00000020 Logo_Off_mode_Show
+00000000 g     F .text.Logo_Mode_Show	00000044 Logo_Mode_Show
+00000000         *UND*	00000000 __gnu_thumb1_case_uqi
+00000000 g     F .text.User_Point_Show	00000054 User_Point_Show
+00000000 g     F .text.User_Led_Show	000000c4 User_Led_Show
+00000000 g     F .text.User_Via_Qmk_Logo_Get_Value	00000034 User_Via_Qmk_Logo_Get_Value
+00000000 g     F .text.User_Via_Qmk_Logo_Set_Value	00000060 User_Via_Qmk_Logo_Set_Value
+00000000 g     F .text.User_Via_Qmk_Logo_Command	0000002c User_Via_Qmk_Logo_Command
+00000000 g     F .text.Vector4C	00000024 Vector4C
+00000000 g     F .text.Vector54	00000014 Vector54
+00000000         *UND*	00000000 __port_irq_epilogue
+00000000 g     F .text.Vector58	00000008 Vector58
+00000000 g     F .text.Vector7C	00000012 Vector7C
+00000000 g     F .text.Vector80	00000014 Vector80
+00000000 g     F .text.Vector84	00000014 Vector84
+00000000 g     F .text.Vector68	00000014 Vector68
+00000000 g     F .text.Vector5C	000000d8 Vector5C
+00000000 g     F .text.Vector78	000004b8 Vector78
+00000000         *UND*	00000000 host_get_driver
+00000000         *UND*	00000000 host_set_driver
+00000000 g     O .bss.Logo_Pwm_B	00000001 Logo_Pwm_B
+00000000 g     O .bss.Logo_Pwm_G	00000001 Logo_Pwm_G
+00000000 g     O .bss.Logo_Pwm_R	00000001 Logo_Pwm_R
+00000000 g     O .bss.Logo_Play_Point	00000001 Logo_Play_Point
+00000000 g     O .bss.Point_Flash_Count	00000001 Point_Flash_Count
+00000000 g     O .bss.es_eeprom_init_flag	00000001 es_eeprom_init_flag
+00000000 g     O .bss.Keyboard_Status	00000006 Keyboard_Status
+00000000 g     O .data.Keyboard_Info	0000000c Keyboard_Info
+00000000 g     O .data.Logo_Index_Tab	00000004 Logo_Index_Tab
+00000000 g     O .bss.Logo_Led_Count	00000001 Logo_Led_Count
+00000000 g     O .bss.Logo_Flash_Count	00000001 Logo_Flash_Count
+00000000 g     O .rodata.rgb_matrix_driver	00000010 rgb_matrix_driver
+00000000 g     O .bss.DMA_list	00000050 DMA_list
+00000000 g     O .bss.Test_Colour	00000001 Test_Colour
+00000000 g     O .bss.Test_Led	00000001 Test_Led
+00000000 g     O .bss.Usb_If_Ok_Led	00000001 Usb_If_Ok_Led
+00000000 g     O .bss.Led_Power_Up_Delay	00000002 Led_Power_Up_Delay
+00000000 g     O .bss.Led_Power_Up	00000001 Led_Power_Up
+00000000 g     O .bss.Led_Off_Start	00000001 Led_Off_Start
+00000000 g     O .bss.Led_Flash_Busy	00000001 Led_Flash_Busy
+00000000 g     O .bss.Mac_Win_Point_Count	00000001 Mac_Win_Point_Count
+00000000 g     O .bss.Led_Point_Count	00000001 Led_Point_Count
+00000000 g     O .bss.Systick_Led_Count	00000001 Systick_Led_Count
+00000000 g     O .data.Led_Batt_Index_Tab	0000000a Led_Batt_Index_Tab
+00000000 g     O .data.Led_Colour_Tab	0000001b Led_Colour_Tab
+00000000 g     O .rodata.adc_initStruct	00000010 adc_initStruct
+00000000 g     O .bss.Batt_Led_Count	00000001 Batt_Led_Count
+00000000 g     O .bss.User_Key_Batt_Count	00000001 User_Key_Batt_Count
+00000000 g     O .bss.User_Key_Batt_Num_Show	00000001 User_Key_Batt_Num_Show
+00000000 g     O .bss.es_stdby_pin_state	00000001 es_stdby_pin_state
+00000000 g     O .bss.User_Power_Low_Count	00000001 User_Power_Low_Count
+00000000 g     O .bss.User_Power_Low	00000001 User_Power_Low
+00000000 g     O .bss.User_Batt_Power_Up_Delay	00000001 User_Batt_Power_Up_Delay
+00000000 g     O .bss.User_Batt_Power_Up_Delay_100ms_Count	00000002 User_Batt_Power_Up_Delay_100ms_Count
+00000000 g     O .bss.User_Batt_Send_Spi	00000001 User_Batt_Send_Spi
+00000000 g     O .bss.User_Batt_Power_Up	00000001 User_Batt_Power_Up
+00000000 g     O .bss.User_Batt_Time_15S_Count	00000002 User_Batt_Time_15S_Count
+00000000 g     O .bss.User_Batt_10ms_Count	00000001 User_Batt_10ms_Count
+00000000 g     O .bss.User_Batt_Old_BaiFen	00000001 User_Batt_Old_BaiFen
+00000000 g     O .bss.User_Batt_BaiFen	00000001 User_Batt_BaiFen
+00000000 g     O .bss.User_Adc_Batt_Count	00000001 User_Adc_Batt_Count
+00000000 g     O .bss.User_Scan_Batt	00000014 User_Scan_Batt
+00000000 g     O .bss.User_Adc_Batt	00000014 User_Adc_Batt
+00000000 g     O .bss.Usb_Change_Mode_Delay	00000002 Usb_Change_Mode_Delay
+00000000 g     O .bss.Usb_Suspend_Delay	00000002 Usb_Suspend_Delay
+00000000 g     O .bss.Usb_Dis_Connect	00000001 Usb_Dis_Connect
+00000000 g     O .bss.g_usb_sof_frame_id_last	00000002 g_usb_sof_frame_id_last
+00000000 g     O .bss.g_usb_sof_frame_id	00000002 g_usb_sof_frame_id
+00000000 g     O .bss.Mode_Synchronization_Signal	00000001 Mode_Synchronization_Signal
+00000000 g     O .data.Temp_System_Led_Status	00000001 Temp_System_Led_Status
+00000000 g     O .bss.Usb_Change_Mode_Wakeup	00000001 Usb_Change_Mode_Wakeup
+00000000 g     O .bss.Led_Rf_Pair_Flg	00000001 Led_Rf_Pair_Flg
+00000000 g     O .bss.Save_Flash_3S_Count	00000002 Save_Flash_3S_Count
+00000000 g     O .bss.Reset_Save_Flash	00000001 Reset_Save_Flash
+00000000 g     O .bss.Save_Flash	00000001 Save_Flash
+00000000 g     O .rodata.es_user_driver	00000014 es_user_driver
+00000000 g     O .bss.es_qmk_driver	00000004 es_qmk_driver
+00000000 g     O .rodata.SPI2_InitStruct	00000028 SPI2_InitStruct
+00000000 g     O .rodata.g_es_dma_ch2alt_cfg	00000004 g_es_dma_ch2alt_cfg
+00000000 g     O .rodata.g_es_dma_ch2pri_cfg	00000004 g_es_dma_ch2pri_cfg
+00000000 g     O .data.Ble_Name_Spi_Count	00000001 Ble_Name_Spi_Count
+00000000 g     O .bss.Ble_Name_Spi_Send	00000001 Ble_Name_Spi_Send
+00000000 g     O .bss.Init_Spi_100ms_Delay	00000001 Init_Spi_100ms_Delay
+00000000 g     O .data.Init_Spi_Power_Up	00000001 Init_Spi_Power_Up
+00000000 g     O .bss.Send_Key_Type	00000001 Send_Key_Type
+00000000 g     O .bss.Repet_Send_Count	00000001 Repet_Send_Count
+00000000 g     O .bss.g_es_spi_tx_buf	00000040 g_es_spi_tx_buf
+00000000 g     O .bss.g_es_spi_rx_buf	00000040 g_es_spi_rx_buf
+00000000 g     O .data.Spi_Interval	00000002 Spi_Interval
+00000000 g     O .bss.Spi_Send_Recv_Flg	00000001 Spi_Send_Recv_Flg
+00000000 g     O .bss.Emi_Test_Start	00000001 Emi_Test_Start
+00000000 g     O .bss.app_2g4_data_rev	00000001 app_2g4_data_rev
+00000000 g     O .bss.app_2g4_data_send	00000001 app_2g4_data_send
+00000000 g     O .bss.Func_Time_3s_Count	00000002 Func_Time_3s_Count
+00000000 g     O .bss.Time_3s_Count	00000002 Time_3s_Count
+00000000 g     O .bss.Systick_Interval_Count	00000002 Systick_Interval_Count
+00000000 g     O .bss.Systick_10ms_Count	00000001 Systick_10ms_Count
+00000000 g     O .bss.Systick_6ms_Count	00000001 Systick_6ms_Count
+00000000 g     O .bss.Keyboard_Reset	00000001 Keyboard_Reset
+00000000 g     O .bss.Key_Reset_Status	00000001 Key_Reset_Status
+00000000 g     O .bss.Key_Fn_Status	00000001 Key_Fn_Status
+00000000 g     O .bss.Key_Ble_3_Status	00000001 Key_Ble_3_Status
+00000000 g     O .bss.Key_Ble_2_Status	00000001 Key_Ble_2_Status
+00000000 g     O .bss.Key_Ble_1_Status	00000001 Key_Ble_1_Status
+00000000 g     O .bss.Key_2p4g_Status	00000001 Key_2p4g_Status
+00000003       O *COM*	00000001 usb_endpoint_interface_lut
+
+
