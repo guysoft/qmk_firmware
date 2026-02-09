@@ -12,12 +12,12 @@
 
 // #ifndef DEBOUNCE
 // #    define DEBOUNCE 5
-#endif
+// #endif
 
 // Maximum debounce: 255ms
-// #if DEBOUNCE > UINT8_MAX
-// #    undef DEBOUNCE
-// #    define DEBOUNCE UINT8_MAX
+#if DEBOUNCE > UINT8_MAX
+#    undef DEBOUNCE
+#    define DEBOUNCE UINT8_MAX
 #endif
 
 #define DEBOUNCE_ELAPSED 0
@@ -119,8 +119,6 @@ static inline void transfer_matrix_values(matrix_row_t raw[], matrix_row_t cooke
     }
 }
 
-#else
+// #else
 // #    include "none.c"
 // #endif
-
-void debounce_free(void) {}

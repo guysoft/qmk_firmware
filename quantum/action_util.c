@@ -340,7 +340,7 @@ void send_nkro_report(void) {
  * FIXME: needs doc
  */
 void send_keyboard_report(void) {
-    if (keymap_config.User_Send_Type && keyboard_protocol && keymap_config.nkro) {
+    if (keymap_config.User_Send_Type && host_can_send_nkro() && keymap_config.nkro) {
         User_send_nkro_report();
     } else {
         User_send_6kro_report();

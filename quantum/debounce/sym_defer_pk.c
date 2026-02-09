@@ -12,12 +12,12 @@
 
 // #ifndef DEBOUNCE
 // #    define DEBOUNCE 5
-#endif
+// #endif
 
 // Maximum debounce: 255ms
-// #if DEBOUNCE > UINT8_MAX
-// #    undef DEBOUNCE
-// #    define DEBOUNCE UINT8_MAX
+#if DEBOUNCE > UINT8_MAX
+#    undef DEBOUNCE
+#    define DEBOUNCE UINT8_MAX
 #endif
 
 #define DEBOUNCE_ELAPSED 0
@@ -128,8 +128,6 @@ static inline void start_debounce_counters(matrix_row_t raw[], matrix_row_t cook
     }
 }
 
-#else
+// #else
 // #    include "none.c"
 // #endif
-
-void debounce_free(void) {}

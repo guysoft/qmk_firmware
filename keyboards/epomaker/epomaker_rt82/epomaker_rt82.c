@@ -17,6 +17,11 @@
 
 #include "../../../lib/rdr_lib/rdr_common.h"
 
+// Compatibility shim: upstream QMK removed the global keyboard_protocol variable,
+// but the pre-compiled librdrcommon.a still references it. Provide it here.
+// Value 1 = HID report protocol (normal operation), 0 = boot protocol.
+uint8_t keyboard_protocol __attribute__((aligned(2))) = 1;
+
 void matrix_io_delay(void) {
 }
 
@@ -54,9 +59,9 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     return false;
 }
 
-void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)  {
+void notify_usb_device_state_change_user(struct usb_device_state usb_device_state)  {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
-        if(usb_device_state == USB_DEVICE_STATE_CONFIGURED) {
+        if(usb_device_state.configure_state == USB_DEVICE_STATE_CONFIGURED) {
             Usb_If_Ok = true;
             Usb_If_Ok_Led = true;
             Usb_If_Ok_Delay = 0;

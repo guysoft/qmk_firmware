@@ -36,18 +36,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [2] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_MYCM, G(KC_E), KC_CALC,  KC_MAIL,    KC_MSEL,   KC_MSTP,  KC_MPRV, KC_MPLY, KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_INS,   KC_MUTE,
         KC_GRV,  KC_1,    KC_2,    KC_3,     KC_4,       KC_5,      KC_6,     KC_7,    KC_8,    KC_9,     KC_0,     KC_MINS,  KC_EQL,   RGB_RTOG, KC_END,
-        KC_TAB,  MD_BLE1, MD_BLE2, MD_BLE3,  MD_24G,     TIME_ST,   KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  RGB_HUD,  RGB_HUI,  RGB_MOD,  KC_INS,
-        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KEY_DEB,  KC_J,    KC_K,    KC_L,     RGB_SAD,  RGB_SAI,  L_LOOP,             KC_PGUP,
-        KC_LSFT,          KC_Z,    L_SHUT,   L_OPEN,     KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   QK_BAT,   L_GIFCH,  RGB_VAI,  KC_PGDN,
-        TEST_CL, QK_WLO,  KC_LALT,                       U_EE_CLR,                              KC_RALT,  KC_NO,              RGB_SPD,  RGB_VAD,  RGB_SPI
+        KC_TAB,  MD_BLE1, MD_BLE2, MD_BLE3,  MD_24G,     TIME_ST,   KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  RM_HUED,  RM_HUEU,  RM_NEXT,  KC_INS,
+        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KEY_DEB,  KC_J,    KC_K,    KC_L,     RM_SATD,  RM_SATU,  L_LOOP,             KC_PGUP,
+        KC_LSFT,          KC_Z,    L_SHUT,   L_OPEN,     KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   QK_BAT,   L_GIFCH,  RM_VALU,  KC_PGDN,
+        TEST_CL, QK_WLO,  KC_LALT,                       U_EE_CLR,                              KC_RALT,  KC_NO,              RM_SPDD,  RM_VALD,  RM_SPDU
     ),
     [3] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,    KC_F4,      KC_F5,     KC_F6,    KC_F7,   KC_F8,   KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,   KC_MUTE,
         KC_GRV,  KC_1,    KC_2,    KC_3,     KC_4,       KC_5,      KC_6,     KC_7,    KC_8,    KC_9,     KC_0,     KC_MINS,  KC_EQL,   RGB_RTOG, KC_END,
-        KC_TAB,  MD_BLE1, MD_BLE2, MD_BLE3,  MD_24G,     TIME_ST,   KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  RGB_HUD,  RGB_HUI,  RGB_MOD,  KC_INS,
-        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KEY_DEB,  KC_J,    KC_K,    KC_L,     RGB_SAD,  RGB_SAI,  L_LOOP,             KC_PGUP,
-        KC_LSFT,          KC_Z,    L_SHUT,   L_OPEN,     KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   QK_BAT,   L_GIFCH,  RGB_VAI,  KC_PGDN,
-        TEST_CL, KC_LALT, KC_LGUI,                       U_EE_CLR,                              KC_RGUI,  KC_NO,              RGB_SPD,  RGB_VAD,  RGB_SPI
+        KC_TAB,  MD_BLE1, MD_BLE2, MD_BLE3,  MD_24G,     TIME_ST,   KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  RM_HUED,  RM_HUEU,  RM_NEXT,  KC_INS,
+        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KEY_DEB,  KC_J,    KC_K,    KC_L,     RM_SATD,  RM_SATU,  L_LOOP,             KC_PGUP,
+        KC_LSFT,          KC_Z,    L_SHUT,   L_OPEN,     KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   QK_BAT,   L_GIFCH,  RM_VALU,  KC_PGDN,
+        TEST_CL, KC_LALT, KC_LGUI,                       U_EE_CLR,                              KC_RGUI,  KC_NO,              RM_SPDD,  RM_VALD,  RM_SPDU
     )
 };
 
@@ -55,8 +55,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
   [0] = { ENCODER_CCW_CW(KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP) },
   [1] = { ENCODER_CCW_CW(KC_AUDIO_VOL_DOWN, KC_AUDIO_VOL_UP) },
-  [2] = { ENCODER_CCW_CW(RGB_SAD, RGB_SAI) },
-  [3] = { ENCODER_CCW_CW(RGB_SPD, RGB_SPI) }
+  [2] = { ENCODER_CCW_CW(RM_SATD, RM_SATU) },
+  [3] = { ENCODER_CCW_CW(RM_SPDD, RM_SPDU) }
 };
 
 #endif

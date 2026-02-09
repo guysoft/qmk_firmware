@@ -20,7 +20,6 @@
 #include "eeconfig.h"
 #include "bootloader.h"
 #include "debounce.h"
-`
 
 /** \brief Reset eeprom
  *

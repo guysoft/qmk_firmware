@@ -12,11 +12,11 @@
 // #    define DEBOUNCE 5
 // #endif
 
-// // Maximum debounce: 255ms
-// #if DEBOUNCE > UINT8_MAX
-// #    undef DEBOUNCE
-// #    define DEBOUNCE UINT8_MAX
-// #endif
+// Maximum debounce: 255ms
+#if DEBOUNCE > UINT8_MAX
+#    undef DEBOUNCE
+#    define DEBOUNCE UINT8_MAX
+#endif
 
 // #if DEBOUNCE > 0
 
@@ -42,7 +42,6 @@ bool debounce(matrix_row_t raw[], matrix_row_t cooked[], bool changed) {
     return cooked_changed;
 }
 
-void debounce_free(void) {}
 // #else // no debouncing.
 // #    include "none.c"
 // #endif

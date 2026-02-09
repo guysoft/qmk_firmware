@@ -149,7 +149,7 @@ void del_key_bit(report_nkro_t* nkro_report, uint8_t code) {
  *
  * FIXME: Needs doc
  */
-void add_key_to_report(uint8_t key) {
+__attribute__((weak)) void add_key_to_report(uint8_t key) {
 #ifdef NKRO_ENABLE
     if (host_can_send_nkro() && keymap_config.nkro) {
         add_key_bit(nkro_report, key);
@@ -163,7 +163,7 @@ void add_key_to_report(uint8_t key) {
  *
  * FIXME: Needs doc
  */
-void del_key_from_report(uint8_t key) {
+__attribute__((weak)) void del_key_from_report(uint8_t key) {
 #ifdef NKRO_ENABLE
     if (host_can_send_nkro() && keymap_config.nkro) {
         del_key_bit(nkro_report, key);
