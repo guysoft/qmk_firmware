@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern keymap_config_t keymap_config;
 
-static uint8_t real_mods = 0;
-static uint8_t weak_mods = 0;
+uint8_t real_mods = 0;
+uint8_t weak_mods = 0;
 #ifdef KEY_OVERRIDE_ENABLE
 static uint8_t weak_override_mods = 0;
 static uint8_t suppressed_mods    = 0;
@@ -35,7 +35,14 @@ static uint8_t suppressed_mods    = 0;
 
 // TODO: pointer variable is not needed
 // report_keyboard_t keyboard_report = {};
+
+#ifdef ES_INCLUDE_INFO_CONFIG_FILE
+report_keyboard_t test_00000_report_keyboard;
+report_keyboard_t *keyboard_report = &test_00000_report_keyboard;
+#else
 report_keyboard_t *keyboard_report = &(report_keyboard_t){};
+#endif
+
 #ifdef NKRO_ENABLE
 report_nkro_t *nkro_report = &(report_nkro_t){};
 #endif
@@ -333,13 +340,11 @@ void send_nkro_report(void) {
  * FIXME: needs doc
  */
 void send_keyboard_report(void) {
-#ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        send_nkro_report();
-        return;
+    if (keymap_config.User_Send_Type && keyboard_protocol && keymap_config.nkro) {
+        User_send_nkro_report();
+    } else {
+        User_send_6kro_report();
     }
-#endif
-    send_6kro_report();
 }
 
 /**
@@ -593,4 +598,17 @@ void neutralize_flashing_modifiers(uint8_t active_mods) {
         }
     }
 }
+
+
 #endif
+
+//-------------------------------------------------------------------------
+
+void User_Send_Key(uint8_t Code, bool Status) {
+    if (Status) {
+        register_code(Code);
+    } else {
+        unregister_code(Code);
+    }
+}
+//-------------------------------------------------------------------------

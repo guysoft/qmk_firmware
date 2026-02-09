@@ -74,6 +74,37 @@ enum via_command_id {
     id_dynamic_keymap_get_encoder           = 0x14,
     id_dynamic_keymap_set_encoder           = 0x15,
     id_unhandled                            = 0xFF,
+
+    id_signalrgb_qmk_version                = 0x21,
+    id_signalrgb_protocol_version           = 0x22,
+    id_signalrgb_unique_identifier          = 0x23,
+    id_signalrgb_stream_leds                = 0x24,
+    id_signalrgb_effect_enable              = 0x25,
+    id_signalrgb_effect_disable             = 0x26,
+    id_signalrgb_get_total_leds             = 0x27,
+    id_signalrgb_get_firmware_type          = 0x28,
+
+    id_screenrgb_protocol_version           = 0x29,
+    id_screenrgb_stream_leds                = 0x2A,
+    id_screenrgb_get_total_leds             = 0x2B,
+    id_screenrgb_get_firmware_type          = 0x2C,
+
+    id_emi_test                             = 0xbb,
+    id_91683_cmd                            = 0xaa,
+};
+
+enum signalrgb_responses {
+    PROTOCOL_VERSION_BYTE_1 = 1,
+    PROTOCOL_VERSION_BYTE_2 = 0,
+    PROTOCOL_VERSION_BYTE_3 = 2,
+    QMK_VERSION_BYTE_1 = 0,
+    QMK_VERSION_BYTE_2 = 17,
+    QMK_VERSION_BYTE_3 = 5,
+    DEVICE_UNIQUE_IDENTIFIER_BYTE_1 = 0,
+    DEVICE_UNIQUE_IDENTIFIER_BYTE_2 = 0,
+    DEVICE_UNIQUE_IDENTIFIER_BYTE_3 = 0,
+    FIRMWARE_TYPE_BYTE = 2,
+    DEVICE_ERROR_LEDS = 254,
 };
 
 enum via_keyboard_value_id {
@@ -91,6 +122,7 @@ enum via_channel_id {
     id_qmk_rgb_matrix_channel = 3,
     id_qmk_audio_channel      = 4,
     id_qmk_led_matrix_channel = 5,
+    id_qmk_lattice_channel    = 6,
 };
 
 enum via_qmk_backlight_value {
@@ -110,6 +142,13 @@ enum via_qmk_rgb_matrix_value {
     id_qmk_rgb_matrix_effect       = 2,
     id_qmk_rgb_matrix_effect_speed = 3,
     id_qmk_rgb_matrix_color        = 4,
+    id_qmk_rgb_signal_user_define  = 5,
+    id_qmk_rgb_all_user_define     = 6,
+    id_qmk_rgb_reset_user_define   = 7,
+    id_qmk_rgb_set_matrix_info     = 8,
+    id_qmk_rgb_get_matrix_info     = 9,
+    id_qmk_rgb_set_matrix_color    = 10,
+    id_qmk_rgb_read_matrix_data    = 11,
 };
 
 enum via_qmk_led_matrix_value {

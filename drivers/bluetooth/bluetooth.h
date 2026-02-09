@@ -53,7 +53,7 @@ uint8_t bluetooth_keyboard_leds(void);
  * \param report The keyboard report to send.
  */
 void bluetooth_send_keyboard(report_keyboard_t *report);
-
+void User_bluetooth_send_keyboard(uint8_t *report, uint32_t len);
 /**
  * \brief Send a nkro report.
  *

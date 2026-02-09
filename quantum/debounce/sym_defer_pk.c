@@ -10,19 +10,19 @@
 #include "timer.h"
 #include "util.h"
 
-#ifndef DEBOUNCE
-#    define DEBOUNCE 5
+// #ifndef DEBOUNCE
+// #    define DEBOUNCE 5
 #endif
 
 // Maximum debounce: 255ms
-#if DEBOUNCE > UINT8_MAX
-#    undef DEBOUNCE
-#    define DEBOUNCE UINT8_MAX
+// #if DEBOUNCE > UINT8_MAX
+// #    undef DEBOUNCE
+// #    define DEBOUNCE UINT8_MAX
 #endif
 
 #define DEBOUNCE_ELAPSED 0
 
-#if DEBOUNCE > 0
+// #if DEBOUNCE > 0
 typedef uint8_t debounce_counter_t;
 // Uses MATRIX_ROWS_PER_HAND instead of MATRIX_ROWS to support split keyboards
 static debounce_counter_t debounce_counters[MATRIX_ROWS_PER_HAND * MATRIX_COLS] = {DEBOUNCE_ELAPSED};
@@ -129,5 +129,7 @@ static inline void start_debounce_counters(matrix_row_t raw[], matrix_row_t cook
 }
 
 #else
-#    include "none.c"
-#endif
+// #    include "none.c"
+// #endif
+
+void debounce_free(void) {}

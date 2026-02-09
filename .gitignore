@@ -128,3 +128,10 @@ compile_commands.json
 via*.json
 /keyboards/**/keymaps/via/*
 /keyboards/**/keymaps/vial/*
+
+# Archives
+*.7z
+*.zip
+
+# Epomaker proprietary lib backup / reference copies
+lib/chibios-contrib.standard/

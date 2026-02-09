@@ -11,19 +11,19 @@
 #include "timer.h"
 #include "util.h"
 
-#ifndef DEBOUNCE
-#    define DEBOUNCE 5
+// #ifndef DEBOUNCE
+// #    define DEBOUNCE 5
 #endif
 
 // Maximum debounce: 127ms
 #if DEBOUNCE > 127
-#    undef DEBOUNCE
+// #    undef DEBOUNCE
 #    define DEBOUNCE 127
 #endif
 
 #define DEBOUNCE_ELAPSED 0
 
-#if DEBOUNCE > 0
+// #if DEBOUNCE > 0
 typedef struct {
     bool    pressed : 1;
     uint8_t time : 7;
@@ -158,5 +158,7 @@ static inline void transfer_matrix_values(matrix_row_t raw[], matrix_row_t cooke
 }
 
 #else
-#    include "none.c"
-#endif
+// #    include "none.c"
+// #endif
+
+void debounce_free(void) {}

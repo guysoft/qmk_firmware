@@ -8,17 +8,17 @@
 #include "debounce.h"
 #include "timer.h"
 #include <string.h>
-#ifndef DEBOUNCE
-#    define DEBOUNCE 5
-#endif
+// #ifndef DEBOUNCE
+// #    define DEBOUNCE 5
+// #endif
 
-// Maximum debounce: 255ms
-#if DEBOUNCE > UINT8_MAX
-#    undef DEBOUNCE
-#    define DEBOUNCE UINT8_MAX
-#endif
+// // Maximum debounce: 255ms
+// #if DEBOUNCE > UINT8_MAX
+// #    undef DEBOUNCE
+// #    define DEBOUNCE UINT8_MAX
+// #endif
 
-#if DEBOUNCE > 0
+// #if DEBOUNCE > 0
 
 void debounce_init(void) {}
 
@@ -30,7 +30,7 @@ bool debounce(matrix_row_t raw[], matrix_row_t cooked[], bool changed) {
     if (changed) {
         debouncing      = true;
         debouncing_time = timer_read_fast();
-    } else if (debouncing && timer_elapsed_fast(debouncing_time) >= DEBOUNCE) {
+    } else if (debouncing && timer_elapsed_fast(debouncing_time) >= Debounce_Delay) {
         size_t matrix_size = MATRIX_ROWS_PER_HAND * sizeof(matrix_row_t);
         if (memcmp(cooked, raw, matrix_size) != 0) {
             memcpy(cooked, raw, matrix_size);
@@ -42,6 +42,7 @@ bool debounce(matrix_row_t raw[], matrix_row_t cooked[], bool changed) {
     return cooked_changed;
 }
 
-#else // no debouncing.
-#    include "none.c"
-#endif
+void debounce_free(void) {}
+// #else // no debouncing.
+// #    include "none.c"
+// #endif
