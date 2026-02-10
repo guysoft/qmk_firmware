@@ -17,7 +17,6 @@
 #pragma once
 
 #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  1151
-#undef  EEPROM_SIZE
 #define EEPROM_SIZE 1152
 
 #define FEE_PAGE_SIZE (0x200)
