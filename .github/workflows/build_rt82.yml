@@ -1,0 +1,39 @@
+name: Build RT82 Firmware
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [rt82]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build RT82 VIA"
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+
+    steps:
+    - name: Rewrite SSH URLs to HTTPS for submodule checkout
+      run: git config --global url."https://github.com/".insteadOf "git@github.com:"
+
+    - name: Disable safe.directory check
+      run: git config --global --add safe.directory '*'
+
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: pip3 install -r requirements.txt
+
+    - name: Compile firmware (via keymap)
+      run: qmk compile -kb epomaker/epomaker_rt82 -km via
+
+    - name: Upload firmware artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: rt82-via-firmware
+        path: epomaker_epomaker_rt82_via.bin
+        if-no-files-found: error
