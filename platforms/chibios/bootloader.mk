@@ -129,6 +129,15 @@ ifeq ($(strip $(BOOTLOADER)), at32-dfu)
     DFU_SUFFIX_ARGS ?= -v 2E3C -p DF11
 endif
 
+ifeq ($(strip $(BOOTLOADER)), fs026_bootloader)
+    OPT_DEFS += -DBOOTLOADER_FS026
+    BOOTLOADER_TYPE = fs026_bootloader
+
+    # Options to pass to dfu-util when flashing
+    DFU_ARGS ?= -d 30CC:AEF1 -a 0 -s 0x00000000:leave
+    DFU_SUFFIX_ARGS ?= -v 30CC -p AEF1
+endif
+
 ifeq ($(strip $(BOOTLOADER_TYPE)),)
     ifneq ($(strip $(BOOTLOADER)),)
         $(call CATASTROPHIC_ERROR,Invalid BOOTLOADER,Invalid bootloader specified. Please set an appropriate bootloader in your rules.mk or info.json.)
