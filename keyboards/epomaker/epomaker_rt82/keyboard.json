@@ -18,12 +18,37 @@
         "nkro": true,
         "mousekey": true,
         "command": false,
-        "rgb_matrix": false
+        "rgb_matrix": true
     },
     "host": {
         "default": {
             "nkro": true
         }
+    },
+    "rgb_matrix": {
+        "driver": "ws2812",
+        "max_brightness": 160,
+        "sleep": true,
+        "animations": {
+            "solid_color": true,
+            "breathing": true,
+            "band_val": true,
+            "cycle_all": true,
+            "cycle_left_right": true,
+            "cycle_up_down": true,
+            "rainbow_moving_chevron": true,
+            "cycle_pinwheel": true,
+            "cycle_spiral": true,
+            "raindrops": true,
+            "splash": true,
+            "solid_splash": true,
+            "solid_reactive_simple": true,
+            "solid_reactive": true
+        }
+    },
+    "ws2812": {
+        "driver": "bitbang",
+        "pin": "A2"
     },
     "processor": "FS026",
     "bootloader": "custom",

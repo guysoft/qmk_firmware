@@ -32,3 +32,12 @@
 #ifndef NOP_FUDGE
 #define NOP_FUDGE 0.4
 #endif
+
+/* --- RGB Matrix (WS2812 bitbang) --- */
+#define RGB_MATRIX_LED_COUNT 82
+#define RGB_MATRIX_KEYPRESSES
+#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+#define RGB_MATRIX_LED_FLUSH_LIMIT 16
+
+/* GPIO pin that controls the LED power supply MOSFET */
+#define LED_POWER_PIN D0
