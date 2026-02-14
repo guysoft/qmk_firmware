@@ -21,6 +21,13 @@
  */
 
 #include QMK_KEYBOARD_H
+#include "rt82_screen.h"
+
+/* Custom keycodes for screen control */
+enum rt82_keycodes {
+    SCR_RST = QK_KB_0,   /* Fn+C  — reset / re-init screen */
+    SCR_CYC,              /* Fn+Enter — cycle screen mode   */
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Layer 0 - Windows base */
@@ -44,25 +51,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Layer 2 - Windows Fn
      *   Fn + Backspace       = next RGB pattern
      *   Fn + RShift + Bksp   = previous RGB pattern
+     *   Fn + C               = screen reset (re-init display)
+     *   Fn + Enter           = cycle screen mode (Home → GIF → Key)
      */
     [2] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_MYCM, G(KC_E), KC_CALC,  KC_MAIL,    KC_MSEL,   KC_MSTP,  KC_MPRV, KC_MPLY, KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_INS,   KC_MUTE,
         KC_GRV,  KC_1,    KC_2,    KC_3,     KC_4,       KC_5,      KC_6,     KC_7,    KC_8,    KC_9,     KC_0,     KC_MINS,  KC_EQL,   RM_NEXT,  KC_END,
         KC_TAB,  KC_NO,   KC_NO,   KC_NO,    KC_NO,      KC_NO,     KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  KC_NO,    KC_NO,    KC_NO,    KC_INS,
-        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KC_NO,    KC_J,    KC_K,    KC_L,     KC_NO,    KC_NO,    KC_NO,              KC_PGUP,
-        KC_LSFT,          KC_Z,    KC_NO,    KC_NO,      KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   KC_NO,    KC_NO,    KC_NO,    KC_PGDN,
+        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KC_NO,    KC_J,    KC_K,    KC_L,     KC_NO,    KC_NO,    SCR_CYC,            KC_PGUP,
+        KC_LSFT,          KC_Z,    KC_NO,    SCR_RST,    KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   KC_NO,    KC_NO,    KC_NO,    KC_PGDN,
         KC_NO,   KC_NO,   KC_LALT,                       EE_CLR,                                KC_RALT,  KC_NO,              KC_NO,    KC_NO,    KC_NO
     ),
     /* Layer 3 - Mac Fn
      *   Fn + Backspace       = next RGB pattern
      *   Fn + RShift + Bksp   = previous RGB pattern
+     *   Fn + C               = screen reset (re-init display)
+     *   Fn + Enter           = cycle screen mode (Home → GIF → Key)
      */
     [3] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,    KC_F4,      KC_F5,     KC_F6,    KC_F7,   KC_F8,   KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,   KC_MUTE,
         KC_GRV,  KC_1,    KC_2,    KC_3,     KC_4,       KC_5,      KC_6,     KC_7,    KC_8,    KC_9,     KC_0,     KC_MINS,  KC_EQL,   RM_NEXT,  KC_END,
         KC_TAB,  KC_NO,   KC_NO,   KC_NO,    KC_NO,      KC_NO,     KC_Y,     KC_U,    KC_PSCR, KC_SCRL,  KC_PAUS,  KC_NO,    KC_NO,    KC_NO,    KC_INS,
-        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KC_NO,    KC_J,    KC_K,    KC_L,     KC_NO,    KC_NO,    KC_NO,              KC_PGUP,
-        KC_LSFT,          KC_Z,    KC_NO,    KC_NO,      KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   KC_NO,    KC_NO,    KC_NO,    KC_PGDN,
+        KC_CAPS, TO(0),   TO(1),   KC_D,     KC_F,       KC_G,      KC_NO,    KC_J,    KC_K,    KC_L,     KC_NO,    KC_NO,    SCR_CYC,            KC_PGUP,
+        KC_LSFT,          KC_Z,    KC_NO,    SCR_RST,    KC_V,      KC_B,     KC_N,    KC_M,    KC_COMM,  KC_DOT,   KC_NO,    KC_NO,    KC_NO,    KC_PGDN,
         KC_NO,   KC_LALT, KC_LGUI,                       EE_CLR,                                KC_RGUI,  KC_NO,              KC_NO,    KC_NO,    KC_NO
     )
 };
@@ -80,6 +91,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         }
     }
+
+    switch (keycode) {
+        case SCR_RST:
+            if (record->event.pressed) {
+                screen_reset();
+            }
+            return false;
+
+        case SCR_CYC:
+            if (record->event.pressed) {
+                screen_next_mode();
+            }
+            return false;
+    }
+
     return true;
 }
 
