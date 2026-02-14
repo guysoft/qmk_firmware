@@ -16,6 +16,7 @@
  */
 
 #include "quantum.h"
+#include "rt82_screen.h"
 
 /* ---------- LED power rail (active-high MOSFET on D0) ---------- */
 #ifdef LED_POWER_PIN
@@ -45,6 +46,13 @@ void matrix_output_select_delay(void) {}
 void matrix_output_unselect_delay(uint8_t line, bool key_pressed) {
     (void)line;
     (void)key_pressed;
+}
+
+/* ---------- Screen (display controller) --------------------------------- */
+void keyboard_post_init_kb(void) {
+    screen_init();
+    screen_boot();
+    keyboard_post_init_user();
 }
 
 /* ---------- RGB Matrix LED layout ---------- */

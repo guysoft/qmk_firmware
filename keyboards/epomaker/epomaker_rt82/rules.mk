@@ -8,3 +8,4 @@ ENCODER_MAP_ENABLE = yes
 DEBOUNCE_TYPE = asym_eager_defer_pk
 
 SRC += ws2812_debug.c
+SRC += rt82_screen.c
