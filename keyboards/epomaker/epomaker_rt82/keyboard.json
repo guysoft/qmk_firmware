@@ -47,7 +47,7 @@
         }
     },
     "ws2812": {
-        "driver": "bitbang",
+        "driver": "custom",
         "pin": "A2"
     },
     "processor": "FS026",

@@ -18,6 +18,12 @@
 #pragma once
 
 #define ES32_USB_USE_USB0 TRUE
+#define ES32_PWM_USE_GP16C2T1 TRUE
+
+/* Raise WS2812 DMA ISR priority so it preempts USB/SysTick.
+ * DMA channel 3 is used for WS2812; channels 3-5 share Vector6C.
+ * Priority 1 = highest user priority (0 reserved for kernel).    */
+#define ES32_DMA_CH345_IRQ_PRIORITY 1
 
 //#include_next <mcuconf.h>
 

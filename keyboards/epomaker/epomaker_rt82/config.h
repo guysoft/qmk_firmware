@@ -33,11 +33,18 @@
 #define NOP_FUDGE 0.4
 #endif
 
-/* --- RGB Matrix (WS2812 bitbang) --- */
+/* --- RGB Matrix --- */
 #define RGB_MATRIX_LED_COUNT 82
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 #define RGB_MATRIX_LED_FLUSH_LIMIT 16
+
+/* --- WS2812 PWM+DMA configuration --- */
+#define WS2812_PWM_DRIVER      PWM_GP16C2T1
+#define WS2812_PWM_CHANNEL     1              /* 1-based → CCVAL1 register    */
+#define WS2812_PWM_PAL_MODE    5              /* AF5: PA2 → GP16C2T1_CH1      */
+#define WS2812_DMA_CHANNEL     ES32_DMA_CHANNEL_3
+#define WS2812_DMA_PERIPH_REQ  66             /* MD_DMA_PRS_GP16C2T1_UP       */
 
 /* GPIO pin that controls the LED power supply MOSFET */
 #define LED_POWER_PIN D0
