@@ -29,6 +29,7 @@
 #include "via.h"
 #include "ws2812.h"
 #include "rgb_matrix.h"
+#include "rt82_screen.h"
 
 /* ====================================================================== */
 /*  Protocol constants                                                    */
@@ -43,6 +44,13 @@
 #define SUBCMD_GET_TIMING   0x04
 #define SUBCMD_DUMP_BUFFER  0x05
 #define SUBCMD_FREEZE_RGB   0x06
+#define SUBCMD_SCREEN_CMD   0x10  /* screen sub-commands via 0xFE */
+
+/* Screen RAW HID protocol (used by rt82display host tool) */
+#define SCREEN_HID_MAGIC    0xAA
+#define SCREEN_HID_INIT     0xE2  /* Init: activate screen USB interface */
+#define SCREEN_HID_HANDSHAKE 0xE0 /* Handshake: ACK */
+#define SCREEN_HID_DOWNLOAD  0xE3 /* Enter download mode */
 
 /* ====================================================================== */
 /*  External symbols from ws2812_custom.c                                 */
@@ -225,10 +233,121 @@ static void cmd_freeze_rgb(uint8_t *data, uint8_t length) {
 }
 
 /* ====================================================================== */
+/*  Screen HID command handlers (AA xx protocol from rt82display)          */
+/* ====================================================================== */
+
+/*
+ * SCREEN_HID_INIT (AA E2): Host requests screen USB activation.
+ * We enable the screen USB interface via UART so that the 0x1919 device
+ * appears on the host.
+ */
+static void cmd_screen_init(uint8_t *data, uint8_t length) {
+    screen_enable_usb();
+
+    /* ACK — echo the packet header back */
+    memset(data + 2, 0, length - 2);
+    raw_hid_send(data, length);
+}
+
+/*
+ * SCREEN_HID_HANDSHAKE (AA E0): Host handshake — just ACK.
+ */
+static void cmd_screen_handshake(uint8_t *data, uint8_t length) {
+    memset(data + 2, 0, length - 2);
+    raw_hid_send(data, length);
+}
+
+/*
+ * SCREEN_HID_DOWNLOAD (AA E3): Host requests download mode.
+ * Forward the GIF-change command to the screen controller via UART.
+ */
+static void cmd_screen_download(uint8_t *data, uint8_t length) {
+    uint8_t screen_count = (length > 5) ? data[5] : 1;
+    screen_send_cmd(SCREEN_CMD_GIF_CHANGE, screen_count, 0x00);
+
+    memset(data + 2, 0, length - 2);
+    raw_hid_send(data, length);
+}
+
+/* ====================================================================== */
+/*  Screen debug sub-commands (via 0xFE 0x10)                              */
+/* ====================================================================== */
+
+/*
+ * SCREEN_CMD sub-command format: [0xFE, 0x10, action, arg1, arg2]
+ *
+ * action:
+ *   0x01 = test colour   (arg1 = colour_id)
+ *   0x02 = set mode       (arg1 = mode)
+ *   0x03 = enable USB
+ *   0x04 = disable USB
+ *   0x05 = power off
+ *   0x06 = power on (full boot sequence)
+ *   0x07 = send raw cmd   (arg1 = cmd, arg2 = data1)
+ */
+static void cmd_screen_debug(uint8_t *data, uint8_t length) {
+    uint8_t action = data[2];
+    uint8_t arg1   = data[3];
+    uint8_t arg2   = data[4];
+
+    switch (action) {
+        case 0x01:
+            screen_test_colour(arg1);
+            break;
+        case 0x02:
+            screen_set_mode(arg1);
+            break;
+        case 0x03:
+            screen_enable_usb();
+            break;
+        case 0x04:
+            screen_disable_usb();
+            break;
+        case 0x05:
+            screen_off();
+            break;
+        case 0x06:
+            screen_boot();
+            break;
+        case 0x07:
+            screen_send_cmd(arg1, arg2, 0x00);
+            break;
+        default:
+            data[2] = 0xFF; /* unknown action */
+            raw_hid_send(data, length);
+            return;
+    }
+
+    data[2] = 0x00; /* OK */
+    raw_hid_send(data, length);
+}
+
+/* ====================================================================== */
 /*  VIA command hook                                                      */
 /* ====================================================================== */
 
 bool via_command_kb(uint8_t *data, uint8_t length) {
+    /* ---- Screen HID protocol (used by rt82display) ---- */
+    if (data[0] == SCREEN_HID_MAGIC) {
+        switch (data[1]) {
+            case SCREEN_HID_INIT:
+                cmd_screen_init(data, length);
+                return true;
+            case SCREEN_HID_HANDSHAKE:
+                cmd_screen_handshake(data, length);
+                return true;
+            case SCREEN_HID_DOWNLOAD:
+                cmd_screen_download(data, length);
+                return true;
+            default:
+                /* Unknown screen sub-command — NACK */
+                data[2] = 0xFF;
+                raw_hid_send(data, length);
+                return true;
+        }
+    }
+
+    /* ---- WS2812 debug protocol ---- */
     if (data[0] != WS2812_DEBUG_CMD) {
         return false; /* Not our command — let VIA handle it */
     }
@@ -251,6 +370,9 @@ bool via_command_kb(uint8_t *data, uint8_t length) {
             return true;
         case SUBCMD_FREEZE_RGB:
             cmd_freeze_rgb(data, length);
+            return true;
+        case SUBCMD_SCREEN_CMD:
+            cmd_screen_debug(data, length);
             return true;
         default:
             /* Unknown sub-command — NACK */

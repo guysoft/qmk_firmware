@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-WS2812 PWM+DMA diagnostic tool for Epomaker RT82.
+RT82 diagnostic tool for Epomaker RT82.
 
 Communicates with the keyboard over RAW HID (VIA debug command 0xFE)
-to test individual LEDs, read ISR timing stats, and dump frame buffer
-contents -- all without reflashing.
+to test individual LEDs, read ISR timing stats, dump frame buffer
+contents, and control the screen -- all without reflashing.
 
 Prerequisites:
     pip install hidapi
@@ -18,6 +18,11 @@ Usage:
     ws2812_diag.py freeze [0|1]                        Freeze/unfreeze RGB matrix
     ws2812_diag.py boundary-test                       Automated boundary test
     ws2812_diag.py sweep                               Light LEDs one-by-one to find corruption
+    ws2812_diag.py screen-test <colour_id>             Display test colour on screen
+    ws2812_diag.py screen-mode <home|key|gif|test>     Set screen work mode
+    ws2812_diag.py screen-usb [on|off]                 Enable/disable screen USB interface
+    ws2812_diag.py screen-power [on|off]               Boot/power-off screen
+    ws2812_diag.py screen-raw <cmd_hex> [data1_hex]    Send raw screen UART command
 """
 
 import sys
@@ -50,6 +55,16 @@ SUB_SET_ALL     = 0x03
 SUB_GET_TIMING  = 0x04
 SUB_DUMP_BUFFER = 0x05
 SUB_FREEZE_RGB  = 0x06
+SUB_SCREEN_CMD  = 0x10
+
+# Screen debug actions (sent via 0xFE 0x10 <action> ...)
+SCREEN_ACT_TEST_COLOUR = 0x01
+SCREEN_ACT_SET_MODE    = 0x02
+SCREEN_ACT_USB_ON      = 0x03
+SCREEN_ACT_USB_OFF     = 0x04
+SCREEN_ACT_POWER_OFF   = 0x05
+SCREEN_ACT_BOOT        = 0x06
+SCREEN_ACT_RAW_CMD     = 0x07
 
 REPORT_LEN = 32  # RAW HID report size
 
@@ -185,6 +200,36 @@ class RT82Debug:
         resp = self._send(bytes([CMD, SUB_FREEZE_RGB, 1 if enable else 0]))
         return resp[2] == 0
 
+    # ── Screen commands ──────────────────────────────────────────────
+
+    def screen_test_colour(self, colour_id):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_TEST_COLOUR, colour_id]))
+        return resp[2] == 0
+
+    def screen_set_mode(self, mode):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_SET_MODE, mode]))
+        return resp[2] == 0
+
+    def screen_usb_on(self):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_USB_ON]))
+        return resp[2] == 0
+
+    def screen_usb_off(self):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_USB_OFF]))
+        return resp[2] == 0
+
+    def screen_power_off(self):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_POWER_OFF]))
+        return resp[2] == 0
+
+    def screen_boot(self):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_BOOT]))
+        return resp[2] == 0
+
+    def screen_raw_cmd(self, cmd_byte, data1):
+        resp = self._send(bytes([CMD, SUB_SCREEN_CMD, SCREEN_ACT_RAW_CMD, cmd_byte, data1]))
+        return resp[2] == 0
+
 
 def cmd_set(args, kb):
     idx, r, g, b = int(args[0]), int(args[1]), int(args[2]), int(args[3])
@@ -303,6 +348,58 @@ def cmd_sweep(args, kb):
     print("Done — RGB matrix unfrozen.")
 
 
+def cmd_screen_test(args, kb):
+    colour_id = int(args[0])
+    print(f"Sending test colour {colour_id} to screen...")
+    ok = kb.screen_test_colour(colour_id)
+    print("OK" if ok else "FAILED")
+
+
+def cmd_screen_mode(args, kb):
+    mode_names = {"home": 0, "key": 1, "gif": 2, "test": 3}
+    arg = args[0].lower()
+    mode = mode_names.get(arg, None)
+    if mode is None:
+        try:
+            mode = int(arg)
+        except ValueError:
+            print(f"Unknown mode: {arg}. Use: home, key, gif, test, or a number.")
+            return
+    print(f"Setting screen mode to {mode}...")
+    ok = kb.screen_set_mode(mode)
+    print("OK" if ok else "FAILED")
+
+
+def cmd_screen_usb(args, kb):
+    state = args[0].lower() if args else "on"
+    if state in ("on", "1"):
+        print("Enabling screen USB interface...")
+        ok = kb.screen_usb_on()
+    else:
+        print("Disabling screen USB interface...")
+        ok = kb.screen_usb_off()
+    print("OK" if ok else "FAILED")
+
+
+def cmd_screen_power(args, kb):
+    state = args[0].lower() if args else "on"
+    if state in ("on", "1"):
+        print("Booting screen (power + reset + boot + init)...")
+        ok = kb.screen_boot()
+    else:
+        print("Powering off screen...")
+        ok = kb.screen_power_off()
+    print("OK" if ok else "FAILED")
+
+
+def cmd_screen_raw(args, kb):
+    cmd_byte = int(args[0], 0)
+    data1 = int(args[1], 0) if len(args) > 1 else 0
+    print(f"Sending raw screen cmd 0x{cmd_byte:02X} data1=0x{data1:02X}...")
+    ok = kb.screen_raw_cmd(cmd_byte, data1)
+    print("OK" if ok else "FAILED")
+
+
 def cmd_ping(args, kb):
     """Send VIA get_protocol_version (0x01) to test if RAW HID transport works."""
     print("Sending VIA get_protocol_version (0x01)...")
@@ -337,6 +434,12 @@ COMMANDS = {
     "freeze":        (cmd_freeze, 0, "freeze [0|1]"),
     "boundary-test": (cmd_boundary_test, 0, "boundary-test"),
     "sweep":         (cmd_sweep, 0, "sweep"),
+    # Screen commands
+    "screen-test":   (cmd_screen_test, 1, "screen-test <colour_id>"),
+    "screen-mode":   (cmd_screen_mode, 1, "screen-mode <home|key|gif|test>"),
+    "screen-usb":    (cmd_screen_usb, 0, "screen-usb [on|off]"),
+    "screen-power":  (cmd_screen_power, 0, "screen-power [on|off]"),
+    "screen-raw":    (cmd_screen_raw, 1, "screen-raw <cmd_hex> [data1_hex]"),
 }
 
 
