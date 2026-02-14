@@ -1,0 +1,8 @@
+# Epomaker RT82 — allow user access to RAW HID interface for diagnostics
+# Install: sudo cp 50-rt82-hid.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger
+
+# Normal keyboard mode (VID:PID 36B0:30A3)
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="36b0", ATTRS{idProduct}=="30a3", MODE="0666"
+
+# Bootloader mode (VID:PID 03EB:2045)
+SUBSYSTEM=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2045", MODE="0666"
